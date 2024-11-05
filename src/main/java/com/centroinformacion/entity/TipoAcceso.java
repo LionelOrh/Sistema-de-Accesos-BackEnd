@@ -9,14 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity 
-@Data 
-@NoArgsConstructor 
+@Entity // reconoce como entidad de JPA
+@Data // getters y setters
+@NoArgsConstructor // agregar constructor sin paràmetros
 @AllArgsConstructor
-@Table(name = "tipoDocumento")
-public class TipoDocumento {
+@Table(name = "tipoAcceso")
+public class TipoAcceso {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idTipoDoc;
+	private int idTipoAcceso;
 	private String descripcion;
 }

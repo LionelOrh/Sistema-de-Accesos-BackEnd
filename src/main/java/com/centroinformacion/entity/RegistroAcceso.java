@@ -2,9 +2,6 @@ package com.centroinformacion.entity;
 
 import java.util.Date;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.centroinformacion.util.FunctionUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -18,52 +15,47 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@Entity
-@Table(name = "accesos")
-public class Accesos {
+@Entity // reconoce como entidad de JPA
+@Data // getters y setters
+@NoArgsConstructor // agregar constructor sin paràmetros
+@AllArgsConstructor
+@Table(name = "registroAcceso")
+public class RegistroAcceso {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idAcceso;
-	private String codigo;
-	private String nombres;
-	private String apellidos;
-	
-	@Temporal(TemporalType.DATE)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd" , timezone = "America/Lima")
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date fecha;
+	private int idRegistro;
 	
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idRol")
-	private Rol rol;
-
-	private int estado;
+	@JoinColumn(name = "idUsuarioRegAcceso")
+	private Usuario usuarioRegAcceso;
 	
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "idUsuario")
-	private Usuario usuarioRegistro;
+	private Usuario usuario;
+	
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idRepresentante")
+	private Representante representante;
+	
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idTipoAcceso")
+	private TipoAcceso tipoAcceso;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-	private Date fecha_Registro;
+	private Date fechaHoraEntrada;
 	
-	public String getReporteEstado() {
-		return estado == 1 ? "Ingresó" : "No Ingresó";
-	}
-	public String getRol() {
-		return rol.getNombre();
-	}
-	public String getReporteFecha() {
-		return FunctionUtil.getFechaString(fecha);
-	}
-	public String getReporteRol() {
-		return rol.getNombre();
-	}
+	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+	private Date fechaHoraSalida;
+
+	
 }

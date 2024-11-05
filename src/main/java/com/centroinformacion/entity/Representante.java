@@ -18,20 +18,21 @@ import lombok.NoArgsConstructor;
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor
-@Table(name = "usuario")
-public class Usuario {
-
+@Table(name = "representante")
+public class Representante {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idUsuario;
+	private int idRepresentante;
+	
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idProveedor")
+	private Proveedor proveedor;
+	
 	private String nombres;
 	private String apellidos;
-
-	private String login;
-	private String password;
-	private String correo;
-	private String celular;
-	private String foto;
+	private String cargo;
 	
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -39,12 +40,4 @@ public class Usuario {
 	private TipoDocumento tipoDocumento;
 	
 	private String numDoc;
-	
-	public String getNombreCompleto() {
-		if (nombres != null && apellidos != null) {
-			return nombres.concat(" ").concat(apellidos);	
-		}else {
-			return ""; 
-		}
-	}
 }

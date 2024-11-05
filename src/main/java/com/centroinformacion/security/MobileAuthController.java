@@ -40,10 +40,8 @@ public class MobileAuthController {
         session.setAttribute("idUsuario", usuario.getIdUsuario());
         session.setAttribute("nombres", usuario.getNombres());
         session.setAttribute("apellidos", usuario.getApellidos());
-        session.setAttribute("dni", usuario.getDni());
         session.setAttribute("correo", usuario.getCorreo());
         session.setAttribute("foto", usuario.getFoto());
-        session.setAttribute("fechaNacimiento", usuario.getFechaNacimiento());
 
 
         return ResponseEntity.ok(Map.of(
@@ -51,10 +49,8 @@ public class MobileAuthController {
                 "login", usuario.getLogin(),
                 "nombres", usuario.getNombres(),
                 "apellidos", usuario.getApellidos(),
-                "dni", usuario.getDni(),
                 "correo", usuario.getCorreo(),
-                "foto", usuario.getFoto(),
-            	"fechaNacimiento", usuario.getFechaNacimiento()
+                "foto", usuario.getFoto()
             ));
 
     }

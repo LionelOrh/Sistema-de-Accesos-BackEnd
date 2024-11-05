@@ -1,6 +1,5 @@
 package com.centroinformacion.controller;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,10 +31,6 @@ public class ProveedorController {
 		public  ResponseEntity<?> registroProveedor(@RequestBody Proveedor obj){
 			Map<String, Object> salida = new HashMap<>();
 			try {
-				obj.setFecha_Registro(new Date());
-				obj.setFecha_Actualizacion(new Date());
-				obj.setEstado(AppSettings.INGRESÓ);
-				
 				
 				
 				Proveedor objSalida = proveedorService.registroProveedor(obj);

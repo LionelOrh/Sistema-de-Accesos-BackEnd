@@ -1,5 +1,8 @@
 package com.centroinformacion.entity;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -10,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,33 +23,20 @@ import lombok.NoArgsConstructor;
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor
-@Table(name = "usuario")
-public class Usuario {
-
+@Table(name = "motivoVisita")
+public class MotivoVisita {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idUsuario;
-	private String nombres;
-	private String apellidos;
-
-	private String login;
-	private String password;
-	private String correo;
-	private String celular;
-	private String foto;
+	private Long idMotivoVisita;
 	
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idTipoDoc")
-	private TipoDocumento tipoDocumento;
+	@JoinColumn(name = "idUsuarioVisitante")
+	private Usuario usuarioVisitante;
 	
-	private String numDoc;
+	private String motivoVisita;
 	
-	public String getNombreCompleto() {
-		if (nombres != null && apellidos != null) {
-			return nombres.concat(" ").concat(apellidos);	
-		}else {
-			return ""; 
-		}
-	}
+	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+	private Date fechaRegistro;
 }

@@ -2,7 +2,7 @@ package com.centroinformacion.util;
 
 public class AppSettings {
 
-	public static final String URL_CROSS_ORIGIN = "https://lionelorh.github.io";
+	public static final String URL_CROSS_ORIGIN = "http://localhost:4200";
 	
 	public static final int INGRESÓ = 1;
 	public static final int NO_INGRESÓ = 0;

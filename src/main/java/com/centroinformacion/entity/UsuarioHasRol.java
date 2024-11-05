@@ -5,13 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-@Entity
+@Entity 
+@Data 
+@NoArgsConstructor 
+@AllArgsConstructor
 @Table(name = "usuario_tiene_rol")
 public class UsuarioHasRol {
 

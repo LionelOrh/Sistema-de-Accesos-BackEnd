@@ -8,25 +8,22 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Entity 
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor
-@Table(name = "rol_has_opcion")
-public class RolHasOpcion {
-
-	
+@Table(name = "usuario_tiene_proveedor")
+public class UsuarioHasProveedor {
 	@EmbeddedId
-	private RolHasOpcionPK rolHasOpcionPK;
-
-	@ManyToOne
-	@JoinColumn(name = "idRol", nullable = false, insertable = false, updatable = false)
-	private Rol rol;
+	private UsuarioHasProveedorPK usuarioHasRolPK;
 	
 	@ManyToOne
-	@JoinColumn(name = "idOpcion", nullable = false, insertable = false, updatable = false)
-	private Opcion opcion;
-
+	@JoinColumn(name = "idUsuarioSupervisor", nullable = false, insertable = false,updatable =false)
+	private Usuario usuarioSupervisor;
 	
+	@ManyToOne
+	@JoinColumn(name = "idProveedor", nullable = false, insertable = false,updatable =false)
+	private Proveedor proveedor;
 	
 }
