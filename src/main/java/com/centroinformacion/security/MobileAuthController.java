@@ -41,6 +41,7 @@ public class MobileAuthController {
         session.setAttribute("nombres", usuario.getNombres());
         session.setAttribute("apellidos", usuario.getApellidos());
         session.setAttribute("correo", usuario.getCorreo());
+        session.setAttribute("numDoc", usuario.getNumDoc());
         session.setAttribute("foto", usuario.getFoto());
 
 
