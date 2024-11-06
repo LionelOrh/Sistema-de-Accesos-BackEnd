@@ -19,5 +19,9 @@ public interface UsuarioService {
 	
 	public abstract Usuario authenticate(String login, String password);
 	
+
+	Usuario guardarUsuarioInvitado (Usuario obj);
+	
+	
 	public void registrarVisitante(String nombres, String apellidos, String celular, String correo, String numDoc, String motivoVisita, int idTipoDoc);
 }
