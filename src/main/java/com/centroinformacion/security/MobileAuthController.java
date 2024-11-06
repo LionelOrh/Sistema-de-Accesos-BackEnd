@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import com.centroinformacion.entity.Usuario;
@@ -24,35 +22,32 @@ import com.centroinformacion.util.AppSettings;
 public class MobileAuthController {
 
     @Autowired
-    private UsuarioService usuarioService;  // Inyección de dependencia
+    private UsuarioService usuarioService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginUsuario request, HttpServletRequest httpRequest, HttpServletResponse response) {
-        // Autenticación del usuario
+    public ResponseEntity<?> login(@RequestBody LoginUsuario request, HttpSession session) {
+        // Autenticación del usuario utilizando el método authenticate del servicio
         Usuario usuario = usuarioService.authenticate(request.getLogin(), request.getPassword());
+        
         if (usuario == null) {
+            // Retorna error si las credenciales no son válidas
             return ResponseEntity.status(401).body("Credenciales inválidas.");
         }
 
-        // Crear sesión
-        HttpSession session = httpRequest.getSession();
+        // Crear la sesión y almacenar información del usuario
         session.setAttribute("login", usuario.getLogin());
         session.setAttribute("idUsuario", usuario.getIdUsuario());
         session.setAttribute("nombres", usuario.getNombres());
         session.setAttribute("apellidos", usuario.getApellidos());
         session.setAttribute("correo", usuario.getCorreo());
-        session.setAttribute("numDoc", usuario.getNumDoc());
-        session.setAttribute("foto", usuario.getFoto());
 
-
+        // Retorna la información del usuario en el response
         return ResponseEntity.ok(Map.of(
                 "idUsuario", usuario.getIdUsuario(),
                 "login", usuario.getLogin(),
                 "nombres", usuario.getNombres(),
                 "apellidos", usuario.getApellidos(),
-                "correo", usuario.getCorreo(),
-                "foto", usuario.getFoto()
-            ));
-
+                "correo", usuario.getCorreo()
+        ));
     }
 }

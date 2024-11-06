@@ -36,7 +36,7 @@ public class Usuario {
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "idTipoDoc")
-	private TipoDocumento tipoDocumento;
+	private TipoDocumento tipodocumento;
 	
 	private String numDoc;
 	
