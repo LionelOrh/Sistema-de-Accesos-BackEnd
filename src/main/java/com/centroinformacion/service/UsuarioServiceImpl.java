@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.centroinformacion.entity.Opcion;
 import com.centroinformacion.entity.Rol;
 import com.centroinformacion.entity.Usuario;
+import com.centroinformacion.entity.UsuarioHasRol;
+import com.centroinformacion.repository.UsuarioHasRolRepository;
 import com.centroinformacion.repository.UsuarioRepository;
 
 
@@ -16,6 +18,9 @@ public class UsuarioServiceImpl implements UsuarioService{
 
 	@Autowired
 	private UsuarioRepository repository;
+	
+	@Autowired
+	private UsuarioHasRolRepository usuarioHasRolRepository;
 	
 	@Override
 	public List<Opcion> traerEnlacesDeUsuario(int idUsuario) {
@@ -40,6 +45,16 @@ public class UsuarioServiceImpl implements UsuarioService{
 	@Override
 	public Usuario authenticate(String login, String password) {
 		 return repository.findByLoginAndPassword(login, password);
+	}
+
+	@Override
+	public Usuario guardarUsuario(Usuario usuario) {
+		return repository.save(usuario);
+	}
+
+	@Override
+	public void asignarRol(UsuarioHasRol usuarioHasRol) {
+		usuarioHasRolRepository.save(usuarioHasRol);
 	}
 
 }
