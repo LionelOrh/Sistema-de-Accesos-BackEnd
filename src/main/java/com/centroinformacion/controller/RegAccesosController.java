@@ -27,7 +27,7 @@ public class RegAccesosController {
 	@GetMapping("/consultaReporteAccesos")
 	@ResponseBody
 	public ResponseEntity<?> consultaReporteAccesos(
-	    @RequestParam(name = "login", required = false, defaultValue = " ") String login,
+	    @RequestParam(name = "login", required = false, defaultValue = "") String login,
 	    @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
 	    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
 	    @RequestParam(name = "idTipoAcceso", required = false, defaultValue = "-1") int idTipoAcceso
@@ -38,13 +38,15 @@ public class RegAccesosController {
 	    System.out.println("Fecha Hasta: " + fechaAccesoHasta);
 	    System.out.println("Tipo de Acceso: " + idTipoAcceso);
 
-	    // Verifica si el valor de login es correcto
-	    if (login.isEmpty()) {
-	        System.out.println("No se proporcionó un login, la búsqueda será sin filtro.");
+	    // Verifica si el valor de login es correcto y ajusta la búsqueda
+	    if (login.trim().isEmpty()) {
+	        login = "%"; // Si no se pasa login, busca todos los registros
+	    } else {
+	        login = "%" + login + "%";
 	    }
 
 	    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
-	        "%" + login + "%",
+	        login,
 	        fechaAccesoDesde,
 	        fechaAccesoHasta,
 	        idTipoAcceso
@@ -52,5 +54,6 @@ public class RegAccesosController {
 
 	    return ResponseEntity.ok(lstSalida);
 	}
+
 
 }
