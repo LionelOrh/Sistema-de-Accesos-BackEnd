@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor
-@Table(name = "tipoDocumento")
+@Table(name = "tipodocumento")
 public class TipoDocumento {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

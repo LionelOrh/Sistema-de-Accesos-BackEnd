@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Data // getters y setters
 @NoArgsConstructor // agregar constructor sin paràmetros
 @AllArgsConstructor
-@Table(name = "registroAcceso")
+@Table(name = "registroacceso")
 public class RegistroAcceso {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +56,4 @@ public class RegistroAcceso {
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
 	private Date fechaHoraSalida;
-
-	
 }

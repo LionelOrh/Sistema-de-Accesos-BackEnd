@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data // getters y setters
 @NoArgsConstructor // agregar constructor sin paràmetros
 @AllArgsConstructor
-@Table(name = "tipoAcceso")
+@Table(name = "tipoacceso")
 public class TipoAcceso {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
