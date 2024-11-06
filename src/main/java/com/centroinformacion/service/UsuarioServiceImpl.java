@@ -42,4 +42,9 @@ public class UsuarioServiceImpl implements UsuarioService{
 		 return repository.findByLoginAndPassword(login, password);
 	}
 
+	@Override
+	public Usuario guardarUsuarioInvitado(Usuario obj) {
+		return repository.save(obj);
+	}
+
 }
