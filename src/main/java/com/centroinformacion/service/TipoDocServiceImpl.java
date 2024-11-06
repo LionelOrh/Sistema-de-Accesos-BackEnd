@@ -10,11 +10,12 @@ import com.centroinformacion.repository.TipoDocRepository;
 
 @Service
 public class TipoDocServiceImpl implements TipoDocService {
+	
 	@Autowired
     private TipoDocRepository tipoDocumentoRepository; 
 
-    @Override
-    public List<TipoDocumento> listaTodos() {
-        return tipoDocumentoRepository.findAll(); 
-    }
+	@Override
+	public List<TipoDocumento> listaTodos() {
+		return tipoDocumentoRepository.findAll(); 
+	}
 }

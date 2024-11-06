@@ -19,8 +19,5 @@ public interface UsuarioService {
 	
 	public abstract Usuario authenticate(String login, String password);
 	
-	public Usuario guardarUsuario(Usuario usuario);
-	
-	public void asignarRol(UsuarioHasRol usuarioHasRol);
-
+	public void registrarVisitante(String nombres, String apellidos, String celular, String correo, String numDoc, String motivoVisita, int idTipoDoc);
 }
