@@ -39,6 +39,7 @@ public class MobileAuthController {
         session.setAttribute("idUsuario", usuario.getIdUsuario());
         session.setAttribute("nombres", usuario.getNombres());
         session.setAttribute("apellidos", usuario.getApellidos());
+        session.setAttribute("numDoc", usuario.getNumDoc());
         session.setAttribute("correo", usuario.getCorreo());
 
         // Retorna la información del usuario en el response
@@ -47,6 +48,7 @@ public class MobileAuthController {
                 "login", usuario.getLogin(),
                 "nombres", usuario.getNombres(),
                 "apellidos", usuario.getApellidos(),
+                "numDoc", usuario.getNumDoc(),
                 "correo", usuario.getCorreo()
         ));
     }
