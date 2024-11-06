@@ -21,5 +21,9 @@ public class Rol {
 	private int idRol;
 	private String nombre;
 	private int estado;
+	
+	public Rol(int idRol) {
+        this.idRol = idRol;
+    }
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.centroinformacion.entity.Opcion;
 import com.centroinformacion.entity.Rol;
 import com.centroinformacion.entity.Usuario;
+import com.centroinformacion.entity.UsuarioHasRol;
 
 public interface UsuarioService {
 
@@ -18,8 +19,9 @@ public interface UsuarioService {
 	
 	public abstract Usuario authenticate(String login, String password);
 	
+
 	Usuario guardarUsuarioInvitado (Usuario obj);
 	
 	
-
+	public void registrarVisitante(String nombres, String apellidos, String celular, String correo, String numDoc, String motivoVisita, int idTipoDoc);
 }
