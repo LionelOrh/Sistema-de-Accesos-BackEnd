@@ -24,26 +24,33 @@ public class RegAccesosController {
 	
 	@Autowired RegAccesosService regAccesosService;
 	
-	 @GetMapping("/consultaReporteAccesos")
-	    @ResponseBody
-	    public ResponseEntity<?> consultaReporteAccesos(
-	        @RequestParam(name = "login", required = true, defaultValue = "") String login,
-	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
-	        @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
-	        @RequestParam(name = "idTipoAcceso", required = false, defaultValue = "-1") int idTipoAcceso
-	    ) {
-	        System.out.println("Código: " + login);
-	        System.out.println("Fecha Desde: " + fechaAccesoDesde);
-	        System.out.println("Fecha Hasta: " + fechaAccesoHasta);
-	        System.out.println("ID Tipo Acceso: " + idTipoAcceso);
-	        
-	        List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
-	            "%" + login + "%",
-	            fechaAccesoDesde,
-	            fechaAccesoHasta,
-	            idTipoAcceso
-	        );
-	        
-	        return ResponseEntity.ok(lstSalida);
+	@GetMapping("/consultaReporteAccesos")
+	@ResponseBody
+	public ResponseEntity<?> consultaReporteAccesos(
+	    @RequestParam(name = "login", required = false, defaultValue = " ") String login,
+	    @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
+	    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
+	    @RequestParam(name = "idTipoAcceso", required = false, defaultValue = "-1") int idTipoAcceso
+	) {
+	    // Agrega logs para verificar los valores
+	    System.out.println("Login: " + login);
+	    System.out.println("Fecha Desde: " + fechaAccesoDesde);
+	    System.out.println("Fecha Hasta: " + fechaAccesoHasta);
+	    System.out.println("Tipo de Acceso: " + idTipoAcceso);
+
+	    // Verifica si el valor de login es correcto
+	    if (login.isEmpty()) {
+	        System.out.println("No se proporcionó un login, la búsqueda será sin filtro.");
 	    }
+
+	    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
+	        "%" + login + "%",
+	        fechaAccesoDesde,
+	        fechaAccesoHasta,
+	        idTipoAcceso
+	    );
+
+	    return ResponseEntity.ok(lstSalida);
+	}
+
 }
