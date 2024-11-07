@@ -6,4 +6,5 @@ import com.centroinformacion.entity.UsuarioHasRol;
 import com.centroinformacion.entity.UsuarioHasRolPK;
 
 public interface UsuarioHasRolRepository extends JpaRepository<UsuarioHasRol, UsuarioHasRolPK> {
+
 }

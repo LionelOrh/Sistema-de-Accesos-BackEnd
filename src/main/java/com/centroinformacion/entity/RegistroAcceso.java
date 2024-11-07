@@ -2,6 +2,7 @@ package com.centroinformacion.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -51,6 +52,16 @@ public class RegistroAcceso {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate fechaAcceso;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm:ss")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
 	private LocalTime horaAcceso;
+	
+	public String getReporteFecha() {
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    return fechaAcceso != null ? fechaAcceso.format(formatter) : "Fecha no disponible";
+	}
+	
+	 public String getTipoAcceso() {
+	        return tipoAcceso != null ? tipoAcceso.getDescripcion() : null;
+	    }
+
 }

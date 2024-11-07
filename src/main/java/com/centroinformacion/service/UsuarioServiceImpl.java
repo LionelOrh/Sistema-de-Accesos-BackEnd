@@ -63,6 +63,12 @@ public class UsuarioServiceImpl implements UsuarioService{
 		 return repository.findByLoginAndPassword(login, password);
 	}
 
+
+	@Override
+	public Usuario guardarUsuarioInvitado(Usuario obj) {
+		return repository.save(obj);
+	}
+
 	 @Override
 	    public void registrarVisitante(String nombres, String apellidos, String celular, String correo, String numDoc, String motivoVisita, int idTipoDoc) {
 	        // 1. Insertar nuevo usuario (Visitante)
@@ -93,11 +99,9 @@ public class UsuarioServiceImpl implements UsuarioService{
 	        motivo.setFechaRegistro(new Date());  // Fecha actual
 	        motivoVisitaRepository.save(motivo);  // Guardar el motivo de visita en la tabla `MotivoVisita`
 	    }
-	 
-	 
+  
 	 @Override
 	 public Usuario buscarPorNumeroDocumento(String numDoc) {
 	     return repository.findByNumDoc(numDoc);  // Buscar al usuario por su número de documento
 	 }
-
 }
