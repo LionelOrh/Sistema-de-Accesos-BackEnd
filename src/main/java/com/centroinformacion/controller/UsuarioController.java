@@ -106,7 +106,7 @@ public class UsuarioController {
 
             return new ResponseEntity<>("Motivo de visita registrado exitosamente", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al registrar el motivo de visita: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("No se encontró tu número de documento: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
