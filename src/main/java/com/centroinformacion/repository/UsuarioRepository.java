@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.centroinformacion.entity.Opcion;
 import com.centroinformacion.entity.Rol;
+import com.centroinformacion.entity.TipoDocumento;
 import com.centroinformacion.entity.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
@@ -29,4 +30,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
 	 Usuario findByLoginAndPassword(String login, String password);
 	 
 	 Usuario findByNumDoc(String numDoc);
+	 
+	 
+	 
 }

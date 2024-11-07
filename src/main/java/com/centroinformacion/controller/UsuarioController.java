@@ -1,6 +1,7 @@
 package com.centroinformacion.controller;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,10 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.centroinformacion.entity.MotivoVisita;
 import com.centroinformacion.entity.Rol;
+import com.centroinformacion.entity.TipoDocumento;
 import com.centroinformacion.entity.Usuario;
 import com.centroinformacion.entity.UsuarioHasRol;
 import com.centroinformacion.entity.UsuarioHasRolPK;
@@ -82,4 +85,30 @@ public class UsuarioController {
             return new ResponseEntity<>("Error al registrar visitante: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @PostMapping("/registrarMotivoVisita")
+    public ResponseEntity<String> registrarMotivoVisita(@RequestBody VisitanteRequest visitanteRequest) {
+        try {
+            // Buscar el usuario por su número de documento
+            Usuario usuario = usuarioService.buscarPorNumeroDocumento(visitanteRequest.getUsuario().getNumDoc());
+            
+            if (usuario == null) {
+                return new ResponseEntity<>("Usuario no encontrado.", HttpStatus.NOT_FOUND);
+            }
+            
+            // Registrar el motivo de visita en la tabla MotivoVisita
+            MotivoVisita motivoVisita = new MotivoVisita();
+            motivoVisita.setMotivoVisita(visitanteRequest.getMotivoVisita());
+            motivoVisita.setUsuarioVisitante(usuario);
+            motivoVisita.setFechaRegistro(new Date());
+            
+            motivoVisitaRepository.save(motivoVisita);
+
+            return new ResponseEntity<>("Motivo de visita registrado exitosamente", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al registrar el motivo de visita: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+   
 }

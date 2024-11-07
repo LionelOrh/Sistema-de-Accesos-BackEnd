@@ -2,6 +2,7 @@ package com.centroinformacion.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,8 +36,6 @@ public class UsuarioServiceImpl implements UsuarioService{
 	 @Autowired
 	 private UsuarioHasRolRepository usuarioHasRolRepository;
 	 
-	 @Autowired
-	 private TipoDocRepository tipoDocumentoRepository;
 	 
 	
 	@Override
@@ -94,5 +93,11 @@ public class UsuarioServiceImpl implements UsuarioService{
 	        motivo.setFechaRegistro(new Date());  // Fecha actual
 	        motivoVisitaRepository.save(motivo);  // Guardar el motivo de visita en la tabla `MotivoVisita`
 	    }
+	 
+	 
+	 @Override
+	 public Usuario buscarPorNumeroDocumento(String numDoc) {
+	     return repository.findByNumDoc(numDoc);  // Buscar al usuario por su número de documento
+	 }
 
 }
