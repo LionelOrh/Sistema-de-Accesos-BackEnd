@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.centroinformacion.entity.RegistroAcceso;
+import com.centroinformacion.entity.Representante;
 import com.centroinformacion.service.RegAccesosService;
 import com.centroinformacion.util.AppSettings;
 
@@ -38,6 +39,7 @@ public class RegAccesosController {
 	
 	@Autowired RegAccesosService regAccesosService;
 	
+	//INTERNOS Y EXTERNOS
 	@GetMapping("/consultaReporteAccesos")
 	@ResponseBody
 	public ResponseEntity<?> consultaReporteAccesos(
@@ -81,7 +83,7 @@ public class RegAccesosController {
 	
 	private static String[] HEADERs = {"CÓDIGO", "NOMBRES", "APELLIDOS", "NRO DOC","FECHA", "HORA", "TIPO DE ACCESO"};
     private static String SHEET = "Reporte de Accesos";
-    private static String TITLE = "Reporte de Accesos - Entrada y Salida";
+    private static String TITLE = "Reporte de Accesos - Entrada y Salida - Internos y Externos";
     private static int[] HEADER_WIDTH = {3000, 6000, 6000, 4000, 3000,3000, 8000};
     
 	@PostMapping("/reporteAccesos")
@@ -187,6 +189,126 @@ public class RegAccesosController {
 	            // Configurar respuesta
 	            response.setContentType("application/vnd.ms-excel");
 	            response.addHeader("Content-disposition", "attachment; filename=ReporteAccesos.xlsx");
+	            
+	            OutputStream outStream = response.getOutputStream();
+	            excel.write(outStream);
+	            outStream.close();
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	
+	//REPRESENTANTES
+	@GetMapping("/consultaReporteRepresentante")
+	@ResponseBody
+	public ResponseEntity<?> consultaReporteRepresentante(
+	    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
+	) {
+	    // Agrega logs para verificar los valores
+	    System.out.println("Nro Documento: " + numDoc);
+	    
+	 // Verifica si el valor de numDoc es correcto y ajusta la búsqueda
+	    if (numDoc.trim().isEmpty()) {
+	    	numDoc = "%"; // Si no se pasa numDoc, busca todos los registros
+	    } else {
+	    	numDoc = "%" + numDoc + "%";
+	    }
+
+	    List<Representante> lstSalida = regAccesosService.listaConsultaCompleta(
+	    	numDoc
+	    );
+
+	    return ResponseEntity.ok(lstSalida);
+	}
+	
+	private static String[] HEADER = {"NOMBRES", "APELLIDOS", "CARGO","NRO DOC", "PROVEEDOR"};
+    private static String SHEETs = "Reporte de Accesos";
+    private static String TITLEs = "Reporte de Accesos - Entrada y Salida - Proveedores";
+    private static int[] HEADER_WIDTHs = {6000, 6000, 4000, 3000,8000};
+    
+	@PostMapping("/reporteRepresentante")
+	public void reporteExcelRepresentante(
+			@RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
+			HttpServletRequest request, HttpServletResponse response) {
+		
+		try(Workbook excel = new XSSFWorkbook()){
+			 Sheet hoja = excel.createSheet(SHEETs);
+	         hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, HEADER_WIDTHs.length - 1));
+	         
+	         for (int i = 0; i < HEADER_WIDTHs.length; i++) {
+	                hoja.setColumnWidth(i, HEADER_WIDTHs[i]);
+	         }
+	         
+	         // Estilo de cabecera
+	            org.apache.poi.ss.usermodel.Font fuente = excel.createFont();
+	            fuente.setFontHeightInPoints((short) 10);
+	            fuente.setFontName("Arial");
+	            fuente.setBold(true);
+	            fuente.setColor(IndexedColors.WHITE.getIndex());
+	            
+	            CellStyle estiloCeldaCentrado = excel.createCellStyle();
+	            estiloCeldaCentrado.setWrapText(true);
+	            estiloCeldaCentrado.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
+	            estiloCeldaCentrado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
+	            estiloCeldaCentrado.setFont(fuente);
+	            estiloCeldaCentrado.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+	            estiloCeldaCentrado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	            
+	         // Estilo de datos
+	            CellStyle estiloDatosCentrado = excel.createCellStyle();
+	            estiloDatosCentrado.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
+	            estiloDatosCentrado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
+	            estiloDatosCentrado.setBorderBottom(BorderStyle.THIN);
+	            estiloDatosCentrado.setBorderTop(BorderStyle.THIN);
+	            estiloDatosCentrado.setBorderLeft(BorderStyle.THIN);
+	            estiloDatosCentrado.setBorderRight(BorderStyle.THIN);
+	            
+	            // Fila 0
+	            org.apache.poi.ss.usermodel.Row fila1 = hoja.createRow(0);
+	            org.apache.poi.ss.usermodel.Cell celAuxs = fila1.createCell(0);
+	            celAuxs.setCellStyle(estiloCeldaCentrado);
+	            celAuxs.setCellValue(TITLEs);
+
+	            // Fila 2 para cabecera
+	            org.apache.poi.ss.usermodel.Row fila3 = hoja.createRow(2);
+	            for (int i = 0; i < HEADER.length; i++) {
+	                org.apache.poi.ss.usermodel.Cell celda1 = fila3.createCell(i);
+	                celda1.setCellStyle(estiloCeldaCentrado);
+	                celda1.setCellValue(HEADER[i]);
+	            }
+	            
+	            List<Representante> lstSalida = regAccesosService.listaConsultaCompleta(
+	        	    	"%" + numDoc + "%"
+	        	    );
+	            
+	            int rowIdx = 3;
+	            for (Representante obj : lstSalida) {
+	                org.apache.poi.ss.usermodel.Row row = hoja.createRow(rowIdx++);
+	                
+	                // NOMBRES
+	                row.createCell(0).setCellValue(obj.getNombres());
+	                row.getCell(0).setCellStyle(estiloDatosCentrado);
+
+	                // APELLIDOS
+	                row.createCell(1).setCellValue(obj.getApellidos());
+	                row.getCell(1).setCellStyle(estiloDatosCentrado);
+
+	                // CARGO
+	                row.createCell(2).setCellValue(obj.getCargo());
+	                row.getCell(2).setCellStyle(estiloDatosCentrado);
+	                
+	             // NRO DOC
+	                row.createCell(3).setCellValue(obj.getNumDoc());
+	                row.getCell(3).setCellStyle(estiloDatosCentrado);
+
+	                // PROVEEDOR
+	                row.createCell(4).setCellValue(obj.getProveedor().getRazonSocial());
+	                row.getCell(4).setCellStyle(estiloDatosCentrado);
+	            }
+	            // Configurar respuesta
+	            response.setContentType("application/vnd.ms-excel");
+	            response.addHeader("Content-disposition", "attachment; filename=ReporteRepresentante.xlsx");
 	            
 	            OutputStream outStream = response.getOutputStream();
 	            excel.write(outStream);
