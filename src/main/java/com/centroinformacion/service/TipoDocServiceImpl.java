@@ -18,4 +18,10 @@ public class TipoDocServiceImpl implements TipoDocService {
 	public List<TipoDocumento> listaTodos() {
 		return tipoDocumentoRepository.findAll(); 
 	}
+
+	@Override
+	public TipoDocumento obtenerTipoDocumentoPorId(Integer idTipoDoc) {
+		 // Método para obtener el tipo de documento por su ID
+        return tipoDocumentoRepository.findById(idTipoDoc).orElse(null);
+	}
 }
