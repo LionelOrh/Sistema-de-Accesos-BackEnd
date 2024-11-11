@@ -48,7 +48,7 @@ public class RegistroAcceso {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate fechaAcceso;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm:ss")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
 	private LocalTime horaAcceso;
 	
 	public String getReporteFecha() {
