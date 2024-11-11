@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.centroinformacion.entity.Rol;
-import com.centroinformacion.entity.TipoAcceso;
 import com.centroinformacion.entity.TipoDocumento;
 import com.centroinformacion.service.RolService;
-import com.centroinformacion.service.TipoAccesoService;
 import com.centroinformacion.service.TipoDocService;
 import com.centroinformacion.util.AppSettings;
 
@@ -27,8 +25,6 @@ public class UtilController {
 	@Autowired
 	private RolService rolService;
 	
-	@Autowired
-	private TipoAccesoService tipoAccesoService;
 	
 	@GetMapping("/listaTipoDoc")
 	@ResponseBody
@@ -40,11 +36,5 @@ public class UtilController {
 	@ResponseBody
 	public List<Rol> listaRol(){
 		return rolService.listaRol();
-	}
-	
-	@GetMapping("/listaTipoAcceso")
-	@ResponseBody
-	public List<TipoAcceso> listaTipoAcceso(){
-		return tipoAccesoService.listaTipoAcceso();
 	}
 }

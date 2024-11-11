@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -39,93 +38,61 @@ public class RegAccesosController {
 	
 	@Autowired RegAccesosService regAccesosService;
 	
-	//INTERNOS Y EXTERNOS
 	@GetMapping("/consultaReporteAccesos")
 	@ResponseBody
 	public ResponseEntity<?> consultaReporteAccesos(
-	    @RequestParam(name = "login", required = false, defaultValue = "") String login,
+	    @RequestParam(name = "login", required = true, defaultValue = "") String login,
 	    @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
 	    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
-	    @RequestParam(name = "idTipoAcceso", required = false, defaultValue = "-1") int idTipoAcceso,
+	    @RequestParam(name = "estado", required = false, defaultValue = "-1") int estado,
 	    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
 	) {
-	    // Agrega logs para verificar los valores
-	    System.out.println("Login: " + login);
+	    // Ajustar valores vacíos para que sean compatibles con la consulta
+	    if (login.trim().isEmpty()) login = "%";
+	    if (numDoc.trim().isEmpty()) numDoc = "%";
+
+	    System.out.println("Código: " + login);
 	    System.out.println("Fecha Desde: " + fechaAccesoDesde);
 	    System.out.println("Fecha Hasta: " + fechaAccesoHasta);
-	    System.out.println("Tipo de Acceso: " + idTipoAcceso);
+	    System.out.println("Estado: " + estado);
 	    System.out.println("Nro Documento: " + numDoc);
-
-	    // Verifica si el valor de login es correcto y ajusta la búsqueda
-	    if (login.trim().isEmpty()) {
-	        login = "%"; // Si no se pasa login, busca todos los registros
-	    } else {
-	        login = "%" + login + "%";
-	    }
-	    
-	 // Verifica si el valor de numDoc es correcto y ajusta la búsqueda
-	    if (numDoc.trim().isEmpty()) {
-	    	numDoc = "%"; // Si no se pasa numDoc, busca todos los registros
-	    } else {
-	    	numDoc = "%" + numDoc + "%";
-	    }
 
 	    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
 	        login,
 	        fechaAccesoDesde,
 	        fechaAccesoHasta,
-	        idTipoAcceso,
+	        estado,
 	        numDoc
 	    );
 
 	    return ResponseEntity.ok(lstSalida);
 	}
-	
-	private static String[] HEADERs = {"CÓDIGO", "NOMBRES", "APELLIDOS", "NRO DOC","FECHA", "HORA", "TIPO DE ACCESO"};
-    private static String SHEET = "Reporte de Accesos";
-    private static String TITLE = "Reporte de Accesos - Entrada y Salida - Internos y Externos";
-    private static int[] HEADER_WIDTH = {3000, 6000, 6000, 4000, 3000,3000, 8000};
-    
-	@PostMapping("/reporteAccesos")
-	public void reporteExcel(@RequestParam(name = "login", required = false, defaultValue = "") String login,
-			@RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
-			@RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
-			@RequestParam(name = "idTipoAcceso", required = false, defaultValue = "-1") int idTipoAcceso,
-			 @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
-			HttpServletRequest request, HttpServletResponse response) {
-		
-		try(Workbook excel = new XSSFWorkbook()){
-			 Sheet hoja = excel.createSheet(SHEET);
-	         hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, HEADER_WIDTH.length - 1));
-	         
-	         for (int i = 0; i < HEADER_WIDTH.length; i++) {
+
+		private static String[] HEADERs = {"CÓDIGO", "NOMBRES", "APELLIDOS", "NRO DOC","FECHA", "HORA", "TIPO DE ACCESO"};
+	    private static String SHEET = "Reporte de Accesos";
+	    private static String TITLE = "Reporte de Accesos - Entrada y Salida - Internos y Externos";
+	    private static int[] HEADER_WIDTH = {3000, 6000, 6000, 4000, 3000,3000, 8000};
+	    
+	    @PostMapping("/reporteAccesos")
+	    public void reporteExcel(
+	        @RequestParam(name = "login", required = false, defaultValue = "") String login,
+	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
+	        @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
+	        @RequestParam(name = "estado", required = false, defaultValue = "-1") int estado, // Cambiado
+	        @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
+	        HttpServletRequest request, HttpServletResponse response
+	    ) {
+	        try (Workbook excel = new XSSFWorkbook()) {
+	            Sheet hoja = excel.createSheet(SHEET);
+	            hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, HEADER_WIDTH.length - 1));
+
+	            for (int i = 0; i < HEADER_WIDTH.length; i++) {
 	                hoja.setColumnWidth(i, HEADER_WIDTH[i]);
-	         }
-	         
-	         // Estilo de cabecera
-	            org.apache.poi.ss.usermodel.Font fuente = excel.createFont();
-	            fuente.setFontHeightInPoints((short) 10);
-	            fuente.setFontName("Arial");
-	            fuente.setBold(true);
-	            fuente.setColor(IndexedColors.WHITE.getIndex());
-	            
-	            CellStyle estiloCeldaCentrado = excel.createCellStyle();
-	            estiloCeldaCentrado.setWrapText(true);
-	            estiloCeldaCentrado.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
-	            estiloCeldaCentrado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
-	            estiloCeldaCentrado.setFont(fuente);
-	            estiloCeldaCentrado.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
-	            estiloCeldaCentrado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	            
-	         // Estilo de datos
-	            CellStyle estiloDatosCentrado = excel.createCellStyle();
-	            estiloDatosCentrado.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
-	            estiloDatosCentrado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
-	            estiloDatosCentrado.setBorderBottom(BorderStyle.THIN);
-	            estiloDatosCentrado.setBorderTop(BorderStyle.THIN);
-	            estiloDatosCentrado.setBorderLeft(BorderStyle.THIN);
-	            estiloDatosCentrado.setBorderRight(BorderStyle.THIN);
-	            
+	            }
+
+	            // Estilo de cabecera
+	            CellStyle estiloCeldaCentrado = crearEstiloCabecera(excel);
+
 	            // Fila 0
 	            org.apache.poi.ss.usermodel.Row fila1 = hoja.createRow(0);
 	            org.apache.poi.ss.usermodel.Cell celAuxs = fila1.createCell(0);
@@ -139,131 +106,99 @@ public class RegAccesosController {
 	                celda1.setCellStyle(estiloCeldaCentrado);
 	                celda1.setCellValue(HEADERs[i]);
 	            }
-	            
+
 	            List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
-	            		"%" + login + "%", 
-	        	        fechaAccesoDesde,
-	        	        fechaAccesoHasta,
-	        	        idTipoAcceso,
-	        	        "%" + numDoc + "%"
-	        	    );
-	            
+	                "%" + login + "%",
+	                fechaAccesoDesde,
+	                fechaAccesoHasta,
+	                estado,
+	                "%" + numDoc + "%"
+	            );
+
 	            int rowIdx = 3;
 	            for (RegistroAcceso obj : lstSalida) {
 	                org.apache.poi.ss.usermodel.Row row = hoja.createRow(rowIdx++);
-	                
+
 	                // CÓDIGO
 	                row.createCell(0).setCellValue(obj.getUsuario().getLogin());
-	                row.getCell(0).setCellStyle(estiloDatosCentrado);
 
 	                // NOMBRES
 	                row.createCell(1).setCellValue(obj.getUsuario().getNombres());
-	                row.getCell(1).setCellStyle(estiloDatosCentrado);
 
 	                // APELLIDOS
 	                row.createCell(2).setCellValue(obj.getUsuario().getApellidos());
-	                row.getCell(2).setCellStyle(estiloDatosCentrado);
-	                
-	             // NRO DOC
+
+	                // NRO DOC
 	                row.createCell(3).setCellValue(obj.getUsuario().getNumDoc());
-	                row.getCell(3).setCellStyle(estiloDatosCentrado);
 
-	             // Fecha (LocalDate)
-	                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-	                row.createCell(4).setCellValue(obj.getFechaAcceso().format(dateFormatter));
-	                row.getCell(4).setCellStyle(estiloDatosCentrado);
+	                // Fecha
+	                row.createCell(4).setCellValue(obj.getFechaAcceso().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-	             // Verifica si la hora no es null antes de formatearla
-	                if (obj.getHoraAcceso() != null) {
-	                    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-	                    row.createCell(5).setCellValue(obj.getHoraAcceso().format(timeFormatter));
-	                } else {
-	                    row.createCell(5).setCellValue("Hora no registrada"); // O cualquier mensaje adecuado
-	                }
-	                row.getCell(5).setCellStyle(estiloDatosCentrado);
+	                // Hora
+	                row.createCell(5).setCellValue(obj.getHoraAcceso() != null
+	                    ? obj.getHoraAcceso().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+	                    : "Hora no registrada");
 
-	                // TIPO DE ACCESO
-	                row.createCell(6).setCellValue(obj.getTipoAcceso());
-	                row.getCell(6).setCellStyle(estiloDatosCentrado);
+	                // ESTADO
+	                row.createCell(6).setCellValue(obj.getUsuario().getEstado() == 0 ? "Salida" : "Ingreso"); // Cambiado
 	            }
-	            // Configurar respuesta
+
 	            response.setContentType("application/vnd.ms-excel");
 	            response.addHeader("Content-disposition", "attachment; filename=ReporteAccesos.xlsx");
-	            
+
 	            OutputStream outStream = response.getOutputStream();
 	            excel.write(outStream);
 	            outStream.close();
-
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
 	    }
-	
-	//REPRESENTANTES
-	@GetMapping("/consultaReporteRepresentante")
-	@ResponseBody
-	public ResponseEntity<?> consultaReporteRepresentante(
-	    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
-	) {
-	    // Agrega logs para verificar los valores
-	    System.out.println("Nro Documento: " + numDoc);
-	    
-	 // Verifica si el valor de numDoc es correcto y ajusta la búsqueda
-	    if (numDoc.trim().isEmpty()) {
-	    	numDoc = "%"; // Si no se pasa numDoc, busca todos los registros
-	    } else {
-	    	numDoc = "%" + numDoc + "%";
-	    }
 
-	    List<Representante> lstSalida = regAccesosService.listaConsultaCompleta(
-	    	numDoc
-	    );
-
-	    return ResponseEntity.ok(lstSalida);
-	}
-	
-	private static String[] HEADER = {"NOMBRES", "APELLIDOS", "CARGO","NRO DOC", "PROVEEDOR"};
-    private static String SHEETs = "Reporte de Accesos";
-    private static String TITLEs = "Reporte de Accesos - Entrada y Salida - Proveedores";
-    private static int[] HEADER_WIDTHs = {6000, 6000, 4000, 3000,8000};
-    
-	@PostMapping("/reporteRepresentante")
-	public void reporteExcelRepresentante(
-			@RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
-			HttpServletRequest request, HttpServletResponse response) {
 		
-		try(Workbook excel = new XSSFWorkbook()){
-			 Sheet hoja = excel.createSheet(SHEETs);
-	         hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, HEADER_WIDTHs.length - 1));
-	         
-	         for (int i = 0; i < HEADER_WIDTHs.length; i++) {
+		//REPRESENTANTES
+		@GetMapping("/consultaReporteRepresentante")
+		@ResponseBody
+		public ResponseEntity<?> consultaReporteRepresentante(
+		    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
+		) {
+		    // Agrega logs para verificar los valores
+		    System.out.println("Nro Documento: " + numDoc);
+		    
+		 // Verifica si el valor de numDoc es correcto y ajusta la búsqueda
+		    if (numDoc.trim().isEmpty()) {
+		    	numDoc = "%"; // Si no se pasa numDoc, busca todos los registros
+		    } else {
+		    	numDoc = "%" + numDoc + "%";
+		    }
+
+		    List<Representante> lstSalida = regAccesosService.listaConsultaCompleta(
+		    	numDoc
+		    );
+
+		    return ResponseEntity.ok(lstSalida);
+		}
+		
+		private static String[] HEADER = {"NOMBRES", "APELLIDOS", "CARGO","NRO DOC", "PROVEEDOR"};
+	    private static String SHEETs = "Reporte de Accesos";
+	    private static String TITLEs = "Reporte de Accesos - Entrada y Salida - Proveedores";
+	    private static int[] HEADER_WIDTHs = {6000, 6000, 4000, 3000,8000};
+	    
+	    @PostMapping("/reporteRepresentante")
+	    public void reporteExcelRepresentante(
+	        @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
+	        HttpServletRequest request, HttpServletResponse response
+	    ) {
+	        try (Workbook excel = new XSSFWorkbook()) {
+	            Sheet hoja = excel.createSheet(SHEETs);
+	            hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, HEADER_WIDTHs.length - 1));
+
+	            for (int i = 0; i < HEADER_WIDTHs.length; i++) {
 	                hoja.setColumnWidth(i, HEADER_WIDTHs[i]);
-	         }
-	         
-	         // Estilo de cabecera
-	            org.apache.poi.ss.usermodel.Font fuente = excel.createFont();
-	            fuente.setFontHeightInPoints((short) 10);
-	            fuente.setFontName("Arial");
-	            fuente.setBold(true);
-	            fuente.setColor(IndexedColors.WHITE.getIndex());
-	            
-	            CellStyle estiloCeldaCentrado = excel.createCellStyle();
-	            estiloCeldaCentrado.setWrapText(true);
-	            estiloCeldaCentrado.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
-	            estiloCeldaCentrado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
-	            estiloCeldaCentrado.setFont(fuente);
-	            estiloCeldaCentrado.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
-	            estiloCeldaCentrado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	            
-	         // Estilo de datos
-	            CellStyle estiloDatosCentrado = excel.createCellStyle();
-	            estiloDatosCentrado.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
-	            estiloDatosCentrado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
-	            estiloDatosCentrado.setBorderBottom(BorderStyle.THIN);
-	            estiloDatosCentrado.setBorderTop(BorderStyle.THIN);
-	            estiloDatosCentrado.setBorderLeft(BorderStyle.THIN);
-	            estiloDatosCentrado.setBorderRight(BorderStyle.THIN);
-	            
+	            }
+
+	            // Estilo de cabecera
+	            CellStyle estiloCeldaCentrado = crearEstiloCabecera(excel);
+
 	            // Fila 0
 	            org.apache.poi.ss.usermodel.Row fila1 = hoja.createRow(0);
 	            org.apache.poi.ss.usermodel.Cell celAuxs = fila1.createCell(0);
@@ -277,45 +212,60 @@ public class RegAccesosController {
 	                celda1.setCellStyle(estiloCeldaCentrado);
 	                celda1.setCellValue(HEADER[i]);
 	            }
-	            
+
 	            List<Representante> lstSalida = regAccesosService.listaConsultaCompleta(
-	        	    	"%" + numDoc + "%"
-	        	    );
-	            
+	                "%" + numDoc + "%"
+	            );
+
 	            int rowIdx = 3;
 	            for (Representante obj : lstSalida) {
 	                org.apache.poi.ss.usermodel.Row row = hoja.createRow(rowIdx++);
-	                
+
 	                // NOMBRES
 	                row.createCell(0).setCellValue(obj.getNombres());
-	                row.getCell(0).setCellStyle(estiloDatosCentrado);
 
 	                // APELLIDOS
 	                row.createCell(1).setCellValue(obj.getApellidos());
-	                row.getCell(1).setCellStyle(estiloDatosCentrado);
 
 	                // CARGO
 	                row.createCell(2).setCellValue(obj.getCargo());
-	                row.getCell(2).setCellStyle(estiloDatosCentrado);
-	                
-	             // NRO DOC
+
+	                // NRO DOC
 	                row.createCell(3).setCellValue(obj.getNumDoc());
-	                row.getCell(3).setCellStyle(estiloDatosCentrado);
 
 	                // PROVEEDOR
 	                row.createCell(4).setCellValue(obj.getProveedor().getRazonSocial());
-	                row.getCell(4).setCellStyle(estiloDatosCentrado);
 	            }
-	            // Configurar respuesta
+
 	            response.setContentType("application/vnd.ms-excel");
 	            response.addHeader("Content-disposition", "attachment; filename=ReporteRepresentante.xlsx");
-	            
+
 	            OutputStream outStream = response.getOutputStream();
 	            excel.write(outStream);
 	            outStream.close();
-
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
 	    }
+	    
+	    private CellStyle crearEstiloCabecera(Workbook excel) {
+	        // Crear fuente para el estilo de cabecera
+	        org.apache.poi.ss.usermodel.Font fuente = excel.createFont();
+	        fuente.setFontHeightInPoints((short) 10);
+	        fuente.setFontName("Arial");
+	        fuente.setBold(true);
+	        fuente.setColor(IndexedColors.WHITE.getIndex());
+
+	        // Crear estilo de celda
+	        CellStyle estiloCeldaCentrado = excel.createCellStyle();
+	        estiloCeldaCentrado.setWrapText(true);
+	        estiloCeldaCentrado.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
+	        estiloCeldaCentrado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
+	        estiloCeldaCentrado.setFont(fuente);
+	        estiloCeldaCentrado.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+	        estiloCeldaCentrado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+	        return estiloCeldaCentrado;
+	    }
+
 }

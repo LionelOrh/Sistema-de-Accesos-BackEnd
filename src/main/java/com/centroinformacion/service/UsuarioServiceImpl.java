@@ -16,7 +16,6 @@ import com.centroinformacion.entity.UsuarioHasRol;
 import com.centroinformacion.entity.UsuarioHasRolPK;
 import com.centroinformacion.repository.MotivoVisitaRepository;
 import com.centroinformacion.repository.RolRepository;
-import com.centroinformacion.repository.TipoDocRepository;
 import com.centroinformacion.repository.UsuarioHasRolRepository;
 import com.centroinformacion.repository.UsuarioRepository;
 

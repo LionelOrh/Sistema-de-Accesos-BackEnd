@@ -47,4 +47,5 @@ public class Usuario {
 			return ""; 
 		}
 	}
+	private int estado;
 }
