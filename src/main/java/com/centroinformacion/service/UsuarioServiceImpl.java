@@ -15,7 +15,6 @@ import com.centroinformacion.entity.UsuarioHasRol;
 import com.centroinformacion.entity.UsuarioHasRolPK;
 import com.centroinformacion.repository.MotivoVisitaRepository;
 import com.centroinformacion.repository.RolRepository;
-import com.centroinformacion.repository.TipoDocRepository;
 import com.centroinformacion.repository.UsuarioHasRolRepository;
 import com.centroinformacion.repository.UsuarioRepository;
 
@@ -35,8 +34,6 @@ public class UsuarioServiceImpl implements UsuarioService{
 	 @Autowired
 	 private UsuarioHasRolRepository usuarioHasRolRepository;
 	 
-	 @Autowired
-	 private TipoDocRepository tipoDocumentoRepository;
 	 
 	
 	@Override

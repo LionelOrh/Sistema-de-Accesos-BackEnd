@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.centroinformacion.entity.RegistroAcceso;
-import com.centroinformacion.entity.TipoAcceso;
+import com.centroinformacion.entity.Representante;
 import com.centroinformacion.repository.RegAccesosRepository;
 import com.centroinformacion.service.RegAccesosService;
 
@@ -23,21 +23,19 @@ public class RegAccesosServiceImpl implements RegAccesosService{
 	}
 
 	@Override
-	public List<RegistroAcceso> listaPorTipoAcceso(TipoAcceso tipoAcceso) {
-		 return repository.findByTipoAcceso(tipoAcceso);
-	}
-
-	@Override
 	public List<RegistroAcceso> listaPorFechaAcceso(LocalDate fechaAcceso) {
 		  return repository.findByFechaAcceso(fechaAcceso);
 	}
 
 	@Override
 	public List<RegistroAcceso> listaConsultaCompleja(String login, LocalDate fechaAccesoDesde,
-			LocalDate fechaAccesoHasta, int idTipoAcceso) {
-		return repository.listaConsultaCompleja(login, fechaAccesoDesde, fechaAccesoHasta, idTipoAcceso);
+			LocalDate fechaAccesoHasta, int idTipoAcceso,String numDoc) {
+		return repository.listaConsultaCompleja(login, fechaAccesoDesde, fechaAccesoHasta, idTipoAcceso,numDoc);
 	}
-	 
+	@Override
+	public List<Representante> listaConsultaCompleta(String numDoc) {
+		return repository.listaConsultaCompleta(numDoc);
+	}
 	
 
 }

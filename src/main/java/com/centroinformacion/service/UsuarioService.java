@@ -5,7 +5,6 @@ import java.util.List;
 import com.centroinformacion.entity.Opcion;
 import com.centroinformacion.entity.Rol;
 import com.centroinformacion.entity.Usuario;
-import com.centroinformacion.entity.UsuarioHasRol;
 
 public interface UsuarioService {
 

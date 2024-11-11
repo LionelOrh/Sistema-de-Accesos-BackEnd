@@ -4,8 +4,8 @@ public class AppSettings {
 
 	public static final String URL_CROSS_ORIGIN = "http://localhost:4200";
 	
-	public static final int INGRESÓ = 1;
-	public static final int NO_INGRESÓ = 0;
+	public static final int SALIDA = 1;
+	public static final int INGRESO = 0;
 	public static final String INGRESÓ_DESC = "ACTIVO";
 	public static final String NO_INGRESÓ_DESC = "INACTIVO";
 	

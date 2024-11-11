@@ -43,11 +43,7 @@ public class RegistroAcceso {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "idRepresentante")
 	private Representante representante;
-	
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idTipoAcceso")
-	private TipoAcceso tipoAcceso;
+
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate fechaAcceso;
@@ -59,9 +55,5 @@ public class RegistroAcceso {
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	    return fechaAcceso != null ? fechaAcceso.format(formatter) : "Fecha no disponible";
 	}
-	
-	 public String getTipoAcceso() {
-	        return tipoAcceso != null ? tipoAcceso.getDescripcion() : null;
-	    }
 
 }

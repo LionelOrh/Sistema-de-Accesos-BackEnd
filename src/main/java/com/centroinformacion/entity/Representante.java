@@ -39,5 +39,7 @@ public class Representante {
 	@JoinColumn(name = "idTipoDoc")
 	private TipoDocumento tipoDocumento;
 	
+	private int estado;
+	
 	private String numDoc;
 }
