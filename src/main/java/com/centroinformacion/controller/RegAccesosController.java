@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.centroinformacion.entity.RegistroAcceso;
-import com.centroinformacion.entity.Representante;
 import com.centroinformacion.service.RegAccesosService;
 import com.centroinformacion.util.AppSettings;
 
@@ -171,7 +170,7 @@ public class RegAccesosController {
 		    	numDoc = "%" + numDoc + "%";
 		    }
 
-		    List<Representante> lstSalida = regAccesosService.listaConsultaCompleta(
+		    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
 		    	numDoc
 		    );
 
@@ -213,28 +212,28 @@ public class RegAccesosController {
 	                celda1.setCellValue(HEADER[i]);
 	            }
 
-	            List<Representante> lstSalida = regAccesosService.listaConsultaCompleta(
+	            List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
 	                "%" + numDoc + "%"
 	            );
 
 	            int rowIdx = 3;
-	            for (Representante obj : lstSalida) {
+	            for (RegistroAcceso obj : lstSalida) {
 	                org.apache.poi.ss.usermodel.Row row = hoja.createRow(rowIdx++);
 
 	                // NOMBRES
-	                row.createCell(0).setCellValue(obj.getNombres());
+	                row.createCell(0).setCellValue(obj.getRepresentante().getNombres());
 
 	                // APELLIDOS
-	                row.createCell(1).setCellValue(obj.getApellidos());
+	                row.createCell(1).setCellValue(obj.getRepresentante().getApellidos());
 
 	                // CARGO
-	                row.createCell(2).setCellValue(obj.getCargo());
+	                row.createCell(2).setCellValue(obj.getRepresentante().getCargo());
 
 	                // NRO DOC
-	                row.createCell(3).setCellValue(obj.getNumDoc());
+	                row.createCell(3).setCellValue(obj.getRepresentante().getNumDoc());
 
 	                // PROVEEDOR
-	                row.createCell(4).setCellValue(obj.getProveedor().getRazonSocial());
+	                row.createCell(4).setCellValue(obj.getRepresentante().getProveedor().getRazonSocial());
 	            }
 
 	            response.setContentType("application/vnd.ms-excel");

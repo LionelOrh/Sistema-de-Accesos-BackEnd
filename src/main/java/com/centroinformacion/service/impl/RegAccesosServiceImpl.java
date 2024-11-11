@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.centroinformacion.entity.RegistroAcceso;
-import com.centroinformacion.entity.Representante;
 import com.centroinformacion.repository.RegAccesosRepository;
 import com.centroinformacion.service.RegAccesosService;
 
@@ -33,7 +32,7 @@ public class RegAccesosServiceImpl implements RegAccesosService{
 		return repository.listaConsultaCompleja(login, fechaAccesoDesde, fechaAccesoHasta, idTipoAcceso,numDoc);
 	}
 	@Override
-	public List<Representante> listaConsultaCompleta(String numDoc) {
+	public List<RegistroAcceso> listaConsultaCompleta(String numDoc) {
 		return repository.listaConsultaCompleta(numDoc);
 	}
 	

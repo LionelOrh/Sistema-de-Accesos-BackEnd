@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.centroinformacion.entity.RegistroAcceso;
-import com.centroinformacion.entity.Representante;
 
 public interface RegAccesosRepository extends JpaRepository<RegistroAcceso, Integer>{
 	List<RegistroAcceso> findByUsuario_Login(String login);
@@ -28,8 +27,8 @@ public interface RegAccesosRepository extends JpaRepository<RegistroAcceso, Inte
             String numDoc);
     
   //PARA TABLA REPRESENTANTE
-    @Query("select a from Representante a where "
-            + " a.numDoc like ?1 ")
-    List<Representante> listaConsultaCompleta(
+    @Query("select a from RegistroAcceso a where "
+            + " a.representante.numDoc like ?1 ")
+    List<RegistroAcceso> listaConsultaCompleta(
             String numDoc);
 }
