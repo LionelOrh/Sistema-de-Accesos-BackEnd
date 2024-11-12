@@ -13,56 +13,66 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 @Configuration
-public class MainSecurity   {
+public class MainSecurity {
 
-    @Autowired
-    UserDetailsService userDetailsService;	
+	@Autowired
+	UserDetailsService userDetailsService;
 
-    @Autowired
-    JwtEntryPoint jwtEntryPoint;
+	@Autowired
+	JwtEntryPoint jwtEntryPoint;
 
-    @Bean
-    public JwtTokenFilter jwtTokenFilter(){
-        return new JwtTokenFilter();
-    }
+	@Bean
+	public JwtTokenFilter jwtTokenFilter() {
+		return new JwtTokenFilter();
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-      return new BCryptPasswordEncoder();
-    }
-    
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-         
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-     
-        return authProvider;
-    }
-    
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
-      return authConfiguration.getAuthenticationManager();
-    }
-    
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    	 
-    	http.csrf(csrf -> csrf.disable())
-    	.exceptionHandling(exp -> exp.authenticationEntryPoint(jwtEntryPoint))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(
-        		auth -> auth.requestMatchers("/url/auth/**").permitAll()
-        		 .requestMatchers("/url/**").permitAll()
-        .anyRequest()
-        .authenticated());
-        
-    	http.authenticationProvider(authenticationProvider());
-    	
-    	http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-    	 
-        return http.build();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+
+		authProvider.setUserDetailsService(userDetailsService);
+		authProvider.setPasswordEncoder(passwordEncoder());
+
+		return authProvider;
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
+		return authConfiguration.getAuthenticationManager();
+	}
+
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+	    http.csrf(csrf -> csrf.disable())
+	        .authorizeHttpRequests(auth -> auth
+	            // Permitir acceso público a las imágenes en /uploads/**
+	        		.requestMatchers(new AntPathRequestMatcher("/uploads/**")).permitAll()
+	            // Permitir acceso público a las rutas de autenticación
+	            .requestMatchers("/url/auth/**").permitAll()
+	            // Permitir acceso público a otras rutas
+	            .requestMatchers("/url/**").permitAll()
+	            // Proteger todas las demás rutas
+	            .anyRequest().authenticated()
+	        )
+	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	        .exceptionHandling(exp -> exp
+	            // Aplicar JwtEntryPoint solo a rutas protegidas
+	            .authenticationEntryPoint(jwtEntryPoint)
+	        );
+
+	    http.authenticationProvider(authenticationProvider());
+	    http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+	    return http.build();
+	}
+
 }

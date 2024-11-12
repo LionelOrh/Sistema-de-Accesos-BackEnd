@@ -14,6 +14,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.centroinformacion.dto.PreRegistroConsultaDTO;
 import com.centroinformacion.entity.RegistroAcceso;
 import com.centroinformacion.service.RegAccesosService;
 import com.centroinformacion.util.AppSettings;
@@ -31,7 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/url/verConsultaReporte")
+@RequestMapping("/url/registroAcceso")
 @CrossOrigin(origins = AppSettings.URL_CROSS_ORIGIN)
 public class RegAccesosController {
 	
@@ -265,6 +267,22 @@ public class RegAccesosController {
 	        estiloCeldaCentrado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 	        return estiloCeldaCentrado;
+	    }
+	    
+	    
+	    //Consulata preRegistro
+	    
+	    @GetMapping("/consultaPreRegistro")
+	    @ResponseBody
+	    public ResponseEntity<?> consultaPreRegistro(@RequestParam(name = "codigo") String codigo) {
+	        PreRegistroConsultaDTO resultado = regAccesosService.buscarPorCodigo(codigo);
+
+	        if (resultado != null) {
+	            return ResponseEntity.ok(resultado);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                    .body("No se encontró ningún usuario o representante con el código proporcionado");
+	        }
 	    }
 
 }

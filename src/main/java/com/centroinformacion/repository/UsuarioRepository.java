@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.centroinformacion.entity.Opcion;
 import com.centroinformacion.entity.Rol;
-import com.centroinformacion.entity.TipoDocumento;
 import com.centroinformacion.entity.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
@@ -32,5 +31,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
 	 Usuario findByNumDoc(String numDoc);
 	 
 	 
-	 
+	 @Query("SELECT u FROM Usuario u WHERE u.login = :codigo OR u.numDoc = :codigo")
+	 List<Usuario> buscarPorCodigo(@Param("codigo") String codigo);
+
 }
