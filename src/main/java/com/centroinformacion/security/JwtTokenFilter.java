@@ -29,24 +29,27 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
-			throws ServletException, IOException {
-		logger.info(">>> Ingreso doFilterInternal");
-		try {
-			String token = getToken(req);
-			logger.info(">>> Llegó token ==> " + token);
-			logger.info(">>> doFilterInternal >> token >> "  + token);
+	        throws ServletException, IOException {
 
-			if (token != null && jwtProvider.validateToken(token)) {
-				String nombreUsuario = jwtProvider.getNombreUsuarioFromToken(token);
-				logger.info(">>> doFilterInternal >> nombreUsuario >> "  + nombreUsuario);
-				UserDetails userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
-				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(auth);
-			}
-		} catch (Exception e) {
-			logger.error("fail en el método doFilter " + e.getMessage());
-		}
-		filterChain.doFilter(req, res);
+		String path = req.getRequestURI();
+	    if (path.startsWith("/uploads/")) {
+	        logger.info(">>> Solicitud a recursos estáticos en /uploads/, excluyendo del filtro JWT");
+	        filterChain.doFilter(req, res);
+	        return;
+	    }
+
+	    try {
+	        String token = getToken(req);
+	        if (token != null && jwtProvider.validateToken(token)) {
+	            String nombreUsuario = jwtProvider.getNombreUsuarioFromToken(token);
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
+	            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+	            SecurityContextHolder.getContext().setAuthentication(auth);
+	        }
+	    } catch (Exception e) {
+	        logger.error("fail en el método doFilter " + e.getMessage());
+	    }
+	    filterChain.doFilter(req, res);
 	}
 
 	private String getToken(HttpServletRequest request) {
