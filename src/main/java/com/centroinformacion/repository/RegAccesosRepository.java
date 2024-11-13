@@ -30,9 +30,8 @@ public interface RegAccesosRepository extends JpaRepository<RegistroAcceso, Inte
     List<RegistroAcceso> listaConsultaCompleta(String numDoc, LocalDate fechaInicio, LocalDate fechaFin);
 
     
-  //PARA ACCESOS APP MOVIL
-    List<RegistroAcceso> findByUsuarioIdUsuario(Integer idUsuario);
-
-    List<RegistroAcceso> findByUsuarioIdUsuarioAndFechaAcceso(Integer idUsuario, LocalDate fechaAcceso);
-
+    //PARA ACCESOS APP MOVIL
+    List<RegistroAcceso> findByUsuario_IdUsuarioAndFechaAcceso(Integer idUsuario, LocalDate fechaAcceso);
+    
+    List<RegistroAcceso> findByUsuario_IdUsuario(Integer idUsuario);
 }

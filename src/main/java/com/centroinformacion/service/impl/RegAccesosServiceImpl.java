@@ -152,27 +152,19 @@ public class RegAccesosServiceImpl implements RegAccesosService{
     }
 
     
+    
+    
+    
+    
     //PARA ACCESOS APP MOVIL
-    @Override
-	public List<MovilRegistroAccesoDTO> buscarPorUsuario(Integer idUsuario) {
-    	List<RegistroAcceso> accesos = repository.findByUsuarioIdUsuario(idUsuario);
-        return accesos.stream().map(acceso -> new MovilRegistroAccesoDTO(
-                acceso.getFechaAcceso(),
-                acceso.getHoraAcceso(),
-                acceso.getTipoAcceso())
-        ).collect(Collectors.toList());
-	}
-
-
-	@Override
-	public List<MovilRegistroAccesoDTO> buscarPorUsuarioYFecha(Integer idUsuario, LocalDate fecha) {
-		List<RegistroAcceso> accesos = repository.findByUsuarioIdUsuarioAndFechaAcceso(idUsuario, fecha);
-        return accesos.stream().map(acceso -> new MovilRegistroAccesoDTO(
-                acceso.getFechaAcceso(),
-                acceso.getHoraAcceso(),
-                acceso.getTipoAcceso())
-        ).collect(Collectors.toList());
+    public List<RegistroAcceso> obtenerAccesosFiltrados(Integer idUsuario, Optional<LocalDate> fecha) {
+        if (fecha.isPresent()) {
+            // Si la fecha está presente, realizamos el filtro por fecha y por idUsuario
+            return repository.findByUsuario_IdUsuarioAndFechaAcceso(idUsuario, fecha.get());
+        } else {
+            // Si no hay fecha, filtramos solo por idUsuario
+            return repository.findByUsuario_IdUsuario(idUsuario);
+        }
     }
-	
 
 }
