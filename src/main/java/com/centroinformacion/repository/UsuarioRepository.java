@@ -42,5 +42,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
 	 @Query("SELECT u.estado FROM Usuario u WHERE u.idUsuario = :idUsuario")
 	 Integer obtenerEstadoUsuario(@Param("idUsuario") Integer idUsuario);
 
-
+	 boolean existsByNumDoc(String numDoc);
 }

@@ -4,4 +4,6 @@ import com.centroinformacion.entity.Invitacion;
 
 public interface InvitacionService {
 	Invitacion guardaInvitacion (Invitacion obj);
+	
+	boolean validarNumDoc(String numDoc);
 }
