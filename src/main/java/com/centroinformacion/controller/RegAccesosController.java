@@ -60,10 +60,9 @@ public class RegAccesosController {
 	@GetMapping("/consultaReporteAccesos")
 	@ResponseBody
 	public ResponseEntity<?> consultaReporteAccesos(
-	    @RequestParam(name = "login", required = true, defaultValue = "") String login,
+	    @RequestParam(name = "login", required = false, defaultValue = "") String login,
 	    @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
 	    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
-	    @RequestParam(name = "estado", required = false, defaultValue = "-1") int estado,
 	    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
 	) {
 	    // Ajustar valores vacíos para que sean compatibles con la consulta
@@ -73,14 +72,12 @@ public class RegAccesosController {
 	    System.out.println("Código: " + login);
 	    System.out.println("Fecha Desde: " + fechaAccesoDesde);
 	    System.out.println("Fecha Hasta: " + fechaAccesoHasta);
-	    System.out.println("Estado: " + estado);
 	    System.out.println("Nro Documento: " + numDoc);
 
 	    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
 	        login,
 	        fechaAccesoDesde,
 	        fechaAccesoHasta,
-	        estado,
 	        numDoc
 	    );
 
@@ -90,14 +87,13 @@ public class RegAccesosController {
 		private static String[] HEADERs = {"CÓDIGO", "NOMBRES", "APELLIDOS", "NRO DOC","FECHA", "HORA", "TIPO DE ACCESO"};
 	    private static String SHEET = "Reporte de Accesos";
 	    private static String TITLE = "Reporte de Accesos - Entrada y Salida - Internos y Externos";
-	    private static int[] HEADER_WIDTH = {3000, 6000, 6000, 4000, 3000,3000, 8000};
+	    private static int[] HEADER_WIDTH = {3000, 6000, 6000, 4000, 3000,3000, 4000};
 	    
 	    @PostMapping("/reporteAccesos")
 	    public void reporteExcel(
 	        @RequestParam(name = "login", required = false, defaultValue = "") String login,
 	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
 	        @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
-	        @RequestParam(name = "estado", required = false, defaultValue = "-1") int estado, // Cambiado
 	        @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
 	        HttpServletRequest request, HttpServletResponse response
 	    ) {
@@ -130,7 +126,6 @@ public class RegAccesosController {
 	                "%" + login + "%",
 	                fechaAccesoDesde,
 	                fechaAccesoHasta,
-	                estado,
 	                "%" + numDoc + "%"
 	            );
 
@@ -159,7 +154,7 @@ public class RegAccesosController {
 	                    : "Hora no registrada");
 
 	                // ESTADO
-	                row.createCell(6).setCellValue(obj.getUsuario().getEstado() == 0 ? "Salida" : "Ingreso"); // Cambiado
+	                row.createCell(6).setCellValue(obj.getTipoAcceso()); // Cambiado
 	            }
 
 	            response.setContentType("application/vnd.ms-excel");
@@ -178,7 +173,9 @@ public class RegAccesosController {
 		@GetMapping("/consultaReporteRepresentante")
 		@ResponseBody
 		public ResponseEntity<?> consultaReporteRepresentante(
-		    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
+		    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
+		    @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
+		    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta
 		) {
 		    // Agrega logs para verificar los valores
 		    System.out.println("Nro Documento: " + numDoc);
@@ -191,20 +188,24 @@ public class RegAccesosController {
 		    }
 
 		    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
-		    	numDoc
+		    	numDoc,
+		    	fechaAccesoDesde,
+		        fechaAccesoHasta
 		    );
 
 		    return ResponseEntity.ok(lstSalida);
 		}
 		
-		private static String[] HEADER = {"NOMBRES", "APELLIDOS", "CARGO","NRO DOC", "PROVEEDOR"};
+		private static String[] HEADER = {"NOMBRES", "APELLIDOS", "CARGO","NRO DOC", "PROVEEDOR", "FECHA", "HORA", "TIPO DE ACCESO"};
 	    private static String SHEETs = "Reporte de Accesos";
 	    private static String TITLEs = "Reporte de Accesos - Entrada y Salida - Proveedores";
-	    private static int[] HEADER_WIDTHs = {6000, 6000, 4000, 3000,8000};
+	    private static int[] HEADER_WIDTHs = {6000, 6000, 4000, 3000,8000, 3000,3000, 4000};
 	    
 	    @PostMapping("/reporteRepresentante")
 	    public void reporteExcelRepresentante(
 	        @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
+	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
+		    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
 	        HttpServletRequest request, HttpServletResponse response
 	    ) {
 	        try (Workbook excel = new XSSFWorkbook()) {
@@ -233,7 +234,9 @@ public class RegAccesosController {
 	            }
 
 	            List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
-	                "%" + numDoc + "%"
+	                "%" + numDoc + "%",
+	                fechaAccesoDesde,
+	    	        fechaAccesoHasta
 	            );
 
 	            int rowIdx = 3;
@@ -254,6 +257,16 @@ public class RegAccesosController {
 
 	                // PROVEEDOR
 	                row.createCell(4).setCellValue(obj.getRepresentante().getProveedor().getRazonSocial());
+	                // Fecha
+	                row.createCell(5).setCellValue(obj.getFechaAcceso().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+	                // Hora
+	                row.createCell(6).setCellValue(obj.getHoraAcceso() != null
+	                    ? obj.getHoraAcceso().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+	                    : "Hora no registrada");
+
+	                // ESTADO
+	                row.createCell(7).setCellValue(obj.getTipoAcceso()); // Cambiado
 	            }
 
 	            response.setContentType("application/vnd.ms-excel");

@@ -17,24 +17,18 @@ public interface RegAccesosRepository extends JpaRepository<RegistroAcceso, Inte
             + " a.usuario.login like ?1 and "
             + " a.fechaAcceso >= ?2 and "
             + " a.fechaAcceso <= ?3 and "
-            + " (?4 = -1 OR a.usuario.estado = ?4) and"
-            + " a.usuario.numDoc like ?5")
+            + " a.usuario.numDoc like ?4")
     List<RegistroAcceso> listaConsultaCompleja(
             String login,
             LocalDate fechaAccesoDesde,
             LocalDate fechaAccesoHasta,
-            int estado,
             String numDoc);
     
   //PARA TABLA REPRESENTANTE
-    @Query("select a from RegistroAcceso a where "
-            + " a.representante.numDoc like ?1 ")
-    List<RegistroAcceso> listaConsultaCompleta(
-            String numDoc);
-    
-    
-    
-    
+
+    @Query("SELECT a FROM RegistroAcceso a WHERE a.representante.numDoc LIKE ?1 AND a.fechaAcceso >= ?2 AND a.fechaAcceso <= ?3")
+    List<RegistroAcceso> listaConsultaCompleta(String numDoc, LocalDate fechaInicio, LocalDate fechaFin);
+
     
     //PARA ACCESOS APP MOVIL
     List<RegistroAcceso> findByUsuario_IdUsuarioAndFechaAcceso(Integer idUsuario, LocalDate fechaAcceso);
