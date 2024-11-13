@@ -1,21 +1,10 @@
 package com.centroinformacion.dto;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+@Data
 public class MovilRegistroAccesoDTO {
-    private LocalDate fechaAcceso;
-    private LocalTime horaAcceso;
-    private String tipoAcceso;
-
-    public MovilRegistroAccesoDTO(LocalDate fechaAcceso, LocalTime horaAcceso, String tipoAcceso) {
-        this.fechaAcceso = fechaAcceso;
-        this.horaAcceso = horaAcceso;
-        this.tipoAcceso = tipoAcceso;
-    }
+    private int idRegistro;
+    private String fecha;
+    private String estado;
 }

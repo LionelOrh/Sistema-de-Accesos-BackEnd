@@ -2,8 +2,8 @@ package com.centroinformacion.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import com.centroinformacion.dto.MovilRegistroAccesoDTO;
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
 import com.centroinformacion.dto.RegistroRequest;
 import com.centroinformacion.entity.RegistroAcceso;
@@ -19,6 +19,5 @@ public interface RegAccesosService {
 	 void registrarAcceso(RegistroRequest request);
 	 
 	//PARA ACCESOS APP MOVIL
-	 public List<MovilRegistroAccesoDTO> buscarPorUsuario(Integer idUsuario);
-	 public List<MovilRegistroAccesoDTO> buscarPorUsuarioYFecha(Integer idUsuario, LocalDate fecha);
+	 public List<RegistroAcceso> obtenerAccesosFiltrados(Integer idUsuario, Optional<LocalDate> fecha);
 }   
