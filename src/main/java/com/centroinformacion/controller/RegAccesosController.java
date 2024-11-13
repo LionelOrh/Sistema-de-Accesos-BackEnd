@@ -60,7 +60,7 @@ public class RegAccesosController {
 	@GetMapping("/consultaReporteAccesos")
 	@ResponseBody
 	public ResponseEntity<?> consultaReporteAccesos(
-	    @RequestParam(name = "login", required = true, defaultValue = "") String login,
+	    @RequestParam(name = "login", required = false, defaultValue = "") String login,
 	    @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
 	    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
 	    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
@@ -94,7 +94,6 @@ public class RegAccesosController {
 	        @RequestParam(name = "login", required = false, defaultValue = "") String login,
 	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
 	        @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
-	        @RequestParam(name = "estado", required = false, defaultValue = "-1") int estado, // Cambiado
 	        @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
 	        HttpServletRequest request, HttpServletResponse response
 	    ) {
@@ -174,7 +173,9 @@ public class RegAccesosController {
 		@GetMapping("/consultaReporteRepresentante")
 		@ResponseBody
 		public ResponseEntity<?> consultaReporteRepresentante(
-		    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
+		    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
+		    @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
+		    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta
 		) {
 		    // Agrega logs para verificar los valores
 		    System.out.println("Nro Documento: " + numDoc);
@@ -187,7 +188,9 @@ public class RegAccesosController {
 		    }
 
 		    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
-		    	numDoc
+		    	numDoc,
+		    	fechaAccesoDesde,
+		        fechaAccesoHasta
 		    );
 
 		    return ResponseEntity.ok(lstSalida);
@@ -201,6 +204,8 @@ public class RegAccesosController {
 	    @PostMapping("/reporteRepresentante")
 	    public void reporteExcelRepresentante(
 	        @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
+	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
+		    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
 	        HttpServletRequest request, HttpServletResponse response
 	    ) {
 	        try (Workbook excel = new XSSFWorkbook()) {
@@ -229,7 +234,9 @@ public class RegAccesosController {
 	            }
 
 	            List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
-	                "%" + numDoc + "%"
+	                "%" + numDoc + "%",
+	                fechaAccesoDesde,
+	    	        fechaAccesoHasta
 	            );
 
 	            int rowIdx = 3;
