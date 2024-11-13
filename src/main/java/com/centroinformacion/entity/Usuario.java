@@ -48,4 +48,9 @@ public class Usuario {
 		}
 	}
 	private int estado;
+	
+	// Constructor adicional para inicializar solo con el ID
+		public Usuario(Integer idUsuario) {
+		    this.idUsuario = idUsuario;
+		}
 }

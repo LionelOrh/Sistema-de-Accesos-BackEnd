@@ -19,12 +19,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
+import com.centroinformacion.dto.RegistroRequest;
 import com.centroinformacion.entity.RegistroAcceso;
 import com.centroinformacion.service.RegAccesosService;
 import com.centroinformacion.util.AppSettings;
@@ -38,6 +40,22 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegAccesosController {
 	
 	@Autowired RegAccesosService regAccesosService;
+	
+	
+	@PostMapping("/registrar")
+	public ResponseEntity<?> registrarAcceso(@RequestBody RegistroRequest request) {
+	    try {
+	        regAccesosService.registrarAcceso(request);
+	        System.out.println("Registro completado con éxito");
+	        return ResponseEntity.ok("Registro realizado con éxito");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en el registro");
+	    }
+	}
+
+
+
+	
 	
 	@GetMapping("/consultaReporteAccesos")
 	@ResponseBody

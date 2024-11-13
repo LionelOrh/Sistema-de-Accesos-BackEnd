@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
+import com.centroinformacion.dto.RegistroRequest;
 import com.centroinformacion.entity.RegistroAcceso;
 
 public interface RegAccesosService {
@@ -13,4 +14,6 @@ public interface RegAccesosService {
 	 List<RegistroAcceso> listaConsultaCompleta(String numDoc); 
 	 
 	 PreRegistroConsultaDTO buscarPorCodigo(String codigo);
+	 
+	 void registrarAcceso(RegistroRequest request);
 }   
