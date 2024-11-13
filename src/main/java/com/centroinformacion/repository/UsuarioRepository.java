@@ -38,6 +38,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
 	 @Modifying
 	 @Query("UPDATE Usuario u SET u.estado = CASE WHEN u.estado = 0 THEN 1 ELSE 0 END WHERE u.idUsuario = :idUsuario")
 	 void actualizarEstadoUsuario(@Param("idUsuario") Integer idUsuario);
+	 
+	 @Query("SELECT u.estado FROM Usuario u WHERE u.idUsuario = :idUsuario")
+	 Integer obtenerEstadoUsuario(@Param("idUsuario") Integer idUsuario);
 
 
 }
