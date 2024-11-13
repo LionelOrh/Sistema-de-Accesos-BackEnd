@@ -42,4 +42,9 @@ public class Representante {
 	private int estado;
 	
 	private String numDoc;
+	
+	public Representante(Integer idRepresentante) {
+	    this.idRepresentante = idRepresentante;
+	}
+
 }

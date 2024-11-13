@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -33,5 +34,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
 	 
 	 @Query("SELECT u FROM Usuario u WHERE u.login = :codigo OR u.numDoc = :codigo")
 	 List<Usuario> buscarPorCodigo(@Param("codigo") String codigo);
+	 
+	 @Modifying
+	 @Query("UPDATE Usuario u SET u.estado = CASE WHEN u.estado = 0 THEN 1 ELSE 0 END WHERE u.idUsuario = :idUsuario")
+	 void actualizarEstadoUsuario(@Param("idUsuario") Integer idUsuario);
+
 
 }

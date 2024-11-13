@@ -1,13 +1,16 @@
 package com.centroinformacion.service.impl;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
+import com.centroinformacion.dto.RegistroRequest;
 import com.centroinformacion.entity.RegistroAcceso;
 import com.centroinformacion.entity.Representante;
 import com.centroinformacion.entity.Usuario;
@@ -21,6 +24,40 @@ public class RegAccesosServiceImpl implements RegAccesosService{
 
 	 @Autowired
 	 private RegAccesosRepository repository;
+	 
+	 @Transactional
+	 @Override
+	 public void registrarAcceso(RegistroRequest request) {
+	     // Validar el usuario que realiza el registro
+	     Usuario usuarioRegistrador = usuarioRepository.findById(request.getIdUsuarioRegAcceso())
+	         .orElseThrow(() -> new RuntimeException("Usuario logueado no encontrado"));
+
+	     // Crear el registro de acceso
+	     RegistroAcceso registro = new RegistroAcceso();
+	     registro.setFechaAcceso(LocalDate.now());
+	     registro.setHoraAcceso(LocalTime.now());
+	     registro.setUsuarioRegAcceso(usuarioRegistrador);
+
+	     if (request.getIdUsuario() != null) {
+	         // Actualizar estado directamente
+	         usuarioRepository.actualizarEstadoUsuario(request.getIdUsuario());
+	         // Asignar referencia del usuario sin cargar toda la entidad
+	         registro.setUsuario(new Usuario(request.getIdUsuario()));
+	     } else if (request.getIdRepresentante() != null) {
+	         // Actualizar estado directamente
+	         representanteRepository.actualizarEstadoRepresentante(request.getIdRepresentante());
+	         // Asignar referencia del representante sin cargar toda la entidad
+	         registro.setRepresentante(new Representante(request.getIdRepresentante()));
+	     }
+
+	     // Guardar el registro de acceso
+	     repository.save(registro);
+	 }
+
+
+
+
+
 
 	@Override
 	public List<RegistroAcceso> listaPorLogin(String login) {
@@ -72,7 +109,7 @@ public class RegAccesosServiceImpl implements RegAccesosService{
         dto.setIdentificacion(usuario.getNumDoc());
         dto.setNombres(usuario.getNombres());
         dto.setApellidos(usuario.getApellidos());
-        dto.setEstado(usuario.getEstado() == 1 ? "Salida" : "Ingreso");
+        dto.setEstado(usuario.getEstado() == 1 ? "Ingreso" : "Salida");
      // Ajustar la URL completa para la foto
         if (usuario.getFoto() != null && !usuario.getFoto().isEmpty()) {
             dto.setFoto("http://localhost:8090/uploads?filename=fotos/" + usuario.getFoto());
@@ -90,7 +127,7 @@ public class RegAccesosServiceImpl implements RegAccesosService{
         dto.setIdentificacion(representante.getNumDoc());
         dto.setNombres(representante.getNombres());
         dto.setApellidos(representante.getApellidos());
-        dto.setEstado(representante.getEstado() == 1 ? "Salida" : "Ingreso");
+        dto.setEstado(representante.getEstado() == 1 ? "Ingreso" : "Salida");
         dto.setId(representante.getIdRepresentante());
         dto.setTipo("representante");
         return dto;
