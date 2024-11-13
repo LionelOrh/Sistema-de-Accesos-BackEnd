@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.centroinformacion.dto.MovilRegistroAccesoDTO;
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
 import com.centroinformacion.dto.RegistroRequest;
 import com.centroinformacion.entity.RegistroAcceso;
@@ -148,5 +150,29 @@ public class RegAccesosServiceImpl implements RegAccesosService{
         dto.setTipo("representante");
         return dto;
     }
+
+    
+    //PARA ACCESOS APP MOVIL
+    @Override
+	public List<MovilRegistroAccesoDTO> buscarPorUsuario(Integer idUsuario) {
+    	List<RegistroAcceso> accesos = repository.findByUsuarioIdUsuario(idUsuario);
+        return accesos.stream().map(acceso -> new MovilRegistroAccesoDTO(
+                acceso.getFechaAcceso(),
+                acceso.getHoraAcceso(),
+                acceso.getTipoAcceso())
+        ).collect(Collectors.toList());
+	}
+
+
+	@Override
+	public List<MovilRegistroAccesoDTO> buscarPorUsuarioYFecha(Integer idUsuario, LocalDate fecha) {
+		List<RegistroAcceso> accesos = repository.findByUsuarioIdUsuarioAndFechaAcceso(idUsuario, fecha);
+        return accesos.stream().map(acceso -> new MovilRegistroAccesoDTO(
+                acceso.getFechaAcceso(),
+                acceso.getHoraAcceso(),
+                acceso.getTipoAcceso())
+        ).collect(Collectors.toList());
+    }
+	
 
 }
