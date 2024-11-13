@@ -22,6 +22,9 @@ public interface RepresentanteRepository extends  JpaRepository<Representante,In
 	
 	@Query("SELECT r.estado FROM Representante r WHERE r.idRepresentante = :idRepresentante")
 	Integer obtenerEstadoRepresentante(@Param("idRepresentante") Integer idRepresentante);
+	
+	
+	boolean existsByNumDoc(String numDoc);
 
 
 }

@@ -1,5 +1,6 @@
 package com.centroinformacion.controller;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,9 +8,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -67,6 +70,7 @@ public class InvitacionController {
             usuarioInvitado.setPassword("No aplica");
             usuarioInvitado.setFoto("No aplica");
             usuarioInvitado.setTipodocumento(tipoDoc);
+            usuarioInvitado.setEstado(0);
 
             // Guardar el usuario invitado
             Usuario nuevoUsuario = usuarioService.guardarUsuarioInvitado(usuarioInvitado);
@@ -122,4 +126,12 @@ public class InvitacionController {
 
         return ResponseEntity.ok(salida);
     }
+    
+    
+    @GetMapping("/validar-numDoc")
+    public ResponseEntity<?> validarNumDoc(@RequestParam String numDoc) {
+        boolean existe = invitacionService.validarNumDoc(numDoc);
+        return ResponseEntity.ok(Collections.singletonMap("existe", existe));
+    }
+
 }
