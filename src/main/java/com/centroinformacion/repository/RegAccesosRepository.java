@@ -17,13 +17,11 @@ public interface RegAccesosRepository extends JpaRepository<RegistroAcceso, Inte
             + " a.usuario.login like ?1 and "
             + " a.fechaAcceso >= ?2 and "
             + " a.fechaAcceso <= ?3 and "
-            + " (?4 = -1 OR a.usuario.estado = ?4) and"
-            + " a.usuario.numDoc like ?5")
+            + " a.usuario.numDoc like ?4")
     List<RegistroAcceso> listaConsultaCompleja(
             String login,
             LocalDate fechaAccesoDesde,
             LocalDate fechaAccesoHasta,
-            int estado,
             String numDoc);
     
   //PARA TABLA REPRESENTANTE
