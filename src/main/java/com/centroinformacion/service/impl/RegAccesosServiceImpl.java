@@ -88,9 +88,9 @@ public class RegAccesosServiceImpl implements RegAccesosService{
 	}
 
 	@Override
-	public List<RegistroAcceso> listaConsultaCompleja(String login, LocalDate fechaAccesoDesde,
-			LocalDate fechaAccesoHasta,String numDoc) {
-		return repository.listaConsultaCompleja(login, fechaAccesoDesde, fechaAccesoHasta ,numDoc);
+	public List<RegistroAcceso> listaConsultaCompleja(String loginOrNumDoc, LocalDate fechaAccesoDesde,
+			LocalDate fechaAccesoHasta) {
+		return repository.listaConsultaCompleja(loginOrNumDoc, fechaAccesoDesde, fechaAccesoHasta);
 	}
 	@Override
 	public List<RegistroAcceso> listaConsultaCompleta(String numDoc, LocalDate fechaAccesoDesde, LocalDate fechaAccesoHasta) {

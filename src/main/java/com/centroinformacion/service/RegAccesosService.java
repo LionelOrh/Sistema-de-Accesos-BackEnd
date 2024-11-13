@@ -11,7 +11,7 @@ import com.centroinformacion.entity.RegistroAcceso;
 public interface RegAccesosService {
 	 List<RegistroAcceso> listaPorLogin(String login);
 	 List<RegistroAcceso> listaPorFechaAcceso(LocalDate fechaAcceso);
-	 List<RegistroAcceso> listaConsultaCompleja(String login, LocalDate fechaAccesoDesde, LocalDate fechaAccesoHasta,String numDoc);   
+	 List<RegistroAcceso> listaConsultaCompleja(String loginOrNumDoc, LocalDate fechaAccesoDesde, LocalDate fechaAccesoHasta);   
 	 List<RegistroAcceso> listaConsultaCompleta(String numDoc, LocalDate fechaAccesoDesde, LocalDate fechaAccesoHasta); 
 	 
 	 PreRegistroConsultaDTO buscarPorCodigo(String codigo);

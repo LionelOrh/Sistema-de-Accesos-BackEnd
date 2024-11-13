@@ -60,25 +60,21 @@ public class RegAccesosController {
 	@GetMapping("/consultaReporteAccesos")
 	@ResponseBody
 	public ResponseEntity<?> consultaReporteAccesos(
-	    @RequestParam(name = "login", required = false, defaultValue = "") String login,
+	    @RequestParam(name = "login", required = false, defaultValue = "") String loginOrNumDoc,
 	    @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
-	    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
-	    @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc
+	    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta
 	) {
 	    // Ajustar valores vacíos para que sean compatibles con la consulta
-	    if (login.trim().isEmpty()) login = "%";
-	    if (numDoc.trim().isEmpty()) numDoc = "%";
+	    if (loginOrNumDoc.trim().isEmpty()) loginOrNumDoc = "%";
 
-	    System.out.println("Código: " + login);
+	    System.out.println("Código: " + loginOrNumDoc);
 	    System.out.println("Fecha Desde: " + fechaAccesoDesde);
 	    System.out.println("Fecha Hasta: " + fechaAccesoHasta);
-	    System.out.println("Nro Documento: " + numDoc);
 
 	    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
-	        login,
+	    		loginOrNumDoc,
 	        fechaAccesoDesde,
-	        fechaAccesoHasta,
-	        numDoc
+	        fechaAccesoHasta
 	    );
 
 	    return ResponseEntity.ok(lstSalida);
@@ -91,10 +87,9 @@ public class RegAccesosController {
 	    
 	    @PostMapping("/reporteAccesos")
 	    public void reporteExcel(
-	        @RequestParam(name = "login", required = false, defaultValue = "") String login,
+	        @RequestParam(name = "login", required = false, defaultValue = "") String loginOrNumDoc,
 	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
 	        @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
-	        @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
 	        HttpServletRequest request, HttpServletResponse response
 	    ) {
 	        try (Workbook excel = new XSSFWorkbook()) {
@@ -123,10 +118,9 @@ public class RegAccesosController {
 	            }
 
 	            List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
-	                "%" + login + "%",
+	                "%" + loginOrNumDoc + "%",
 	                fechaAccesoDesde,
-	                fechaAccesoHasta,
-	                "%" + numDoc + "%"
+	                fechaAccesoHasta
 	            );
 
 	            int rowIdx = 3;
