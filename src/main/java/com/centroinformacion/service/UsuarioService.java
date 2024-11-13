@@ -25,5 +25,6 @@ public interface UsuarioService {
 	public void registrarVisitante(String nombres, String apellidos, String celular, String correo, String numDoc, String motivoVisita, int idTipoDoc);
 
 	public Usuario buscarPorNumeroDocumento(String numDoc);
-
+	
+	
 }

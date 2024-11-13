@@ -19,6 +19,9 @@ public interface RepresentanteRepository extends  JpaRepository<Representante,In
 	@Modifying
 	@Query("UPDATE Representante r SET r.estado = CASE WHEN r.estado = 0 THEN 1 ELSE 0 END WHERE r.idRepresentante = :idRepresentante")
 	void actualizarEstadoRepresentante(@Param("idRepresentante") Integer idRepresentante);
+	
+	@Query("SELECT r.estado FROM Representante r WHERE r.idRepresentante = :idRepresentante")
+	Integer obtenerEstadoRepresentante(@Param("idRepresentante") Integer idRepresentante);
 
 
 }

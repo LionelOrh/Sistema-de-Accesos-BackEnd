@@ -39,11 +39,20 @@ public class RegAccesosServiceImpl implements RegAccesosService{
 	     registro.setUsuarioRegAcceso(usuarioRegistrador);
 
 	     if (request.getIdUsuario() != null) {
+	    	// Obtener el estado actual del usuario directamente desde la base de datos
+	         String tipoAcceso = obtenerTipoAccesoUsuario(request.getIdUsuario());
+	         registro.setTipoAcceso(tipoAcceso);
+
 	         // Actualizar estado directamente
 	         usuarioRepository.actualizarEstadoUsuario(request.getIdUsuario());
 	         // Asignar referencia del usuario sin cargar toda la entidad
 	         registro.setUsuario(new Usuario(request.getIdUsuario()));
 	     } else if (request.getIdRepresentante() != null) {
+	    	 
+	    	// Obtener el estado actual del representante directamente desde la base de datos
+	         String tipoAcceso = obtenerTipoAccesoRepresentante(request.getIdRepresentante());
+	         registro.setTipoAcceso(tipoAcceso);
+	         
 	         // Actualizar estado directamente
 	         representanteRepository.actualizarEstadoRepresentante(request.getIdRepresentante());
 	         // Asignar referencia del representante sin cargar toda la entidad
@@ -55,8 +64,15 @@ public class RegAccesosServiceImpl implements RegAccesosService{
 	 }
 
 
+	 private String obtenerTipoAccesoRepresentante(Integer idRepresentante) {
+		    Integer estado = representanteRepository.obtenerEstadoRepresentante(idRepresentante);
+		    return estado == 0 ? "Ingreso" : "Salida";
+		}
 
-
+	 private String obtenerTipoAccesoUsuario(Integer idUsuario) {
+		    Integer estado = usuarioRepository.obtenerEstadoUsuario(idUsuario);
+		    return estado == 0 ? "Ingreso" : "Salida";
+		}
 
 
 	@Override
