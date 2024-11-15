@@ -19,4 +19,9 @@ public class TipoDocumento {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idTipoDoc;
 	private String descripcion;
+	
+	// Constructor adicional para inicializar solo con el ID
+		public TipoDocumento(int idTipoDoc) {
+			this.idTipoDoc = idTipoDoc;
+		}
 }

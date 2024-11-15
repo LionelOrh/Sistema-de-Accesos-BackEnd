@@ -1,11 +1,14 @@
 package com.centroinformacion.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +17,7 @@ import com.centroinformacion.entity.TipoDocumento;
 import com.centroinformacion.service.RolService;
 import com.centroinformacion.service.TipoDocService;
 import com.centroinformacion.util.AppSettings;
+import com.centroinformacion.util.UtilService;
 
 @RestController
 @RequestMapping("/url/util")
@@ -24,6 +28,9 @@ public class UtilController {
 	
 	@Autowired
 	private RolService rolService;
+	
+	@Autowired
+	private UtilService utilService;
 	
 	
 	@GetMapping("/listaTipoDoc")
@@ -37,4 +44,10 @@ public class UtilController {
 	public List<Rol> listaRol(){
 		return rolService.listaRol();
 	}
+	
+	@GetMapping("/validar-numDoc")
+    public ResponseEntity<?> validarNumDoc(@RequestParam String numDoc) {
+        boolean existe = utilService.validarNumDoc(numDoc);
+        return ResponseEntity.ok(Collections.singletonMap("existe", existe));
+    }
 }

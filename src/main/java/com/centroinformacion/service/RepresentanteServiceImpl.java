@@ -7,16 +7,13 @@ import com.centroinformacion.entity.Representante;
 import com.centroinformacion.repository.RepresentanteRepository;
 
 @Service
-public class RepresentanteServiceImpl implements RepresentanteService{
-	@Autowired
-	private RepresentanteRepository repository;
-	
+public class RepresentanteServiceImpl implements RepresentanteService {
 
-	
+    @Autowired
+    private RepresentanteRepository representanteRepository;
 
-	@Override
-	public Representante registroRepresentante(Representante representante) {
-		return repository.save(representante);
-	}
-
+    @Override
+    public void registroRepresentante(Representante representante) {
+        representanteRepository.save(representante);
+    }
 }
