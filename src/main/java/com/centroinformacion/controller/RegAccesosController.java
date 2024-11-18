@@ -72,7 +72,7 @@ public class RegAccesosController {
 	    System.out.println("Fecha Hasta: " + fechaAccesoHasta);
 
 	    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
-	    		loginOrNumDoc,
+	    		 "%" + loginOrNumDoc + "%",
 	        fechaAccesoDesde,
 	        fechaAccesoHasta
 	    );
@@ -182,7 +182,7 @@ public class RegAccesosController {
 		    }
 
 		    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
-		    	numDoc,
+		    		  "%" + numDoc + "%",
 		    	fechaAccesoDesde,
 		        fechaAccesoHasta
 		    );
