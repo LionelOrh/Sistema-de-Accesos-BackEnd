@@ -10,4 +10,8 @@ public interface ProveedorRepository extends JpaRepository<Proveedor, Integer> {
 	List<Proveedor> findTop5ByOrderByIdProveedorAsc();
 
 	List<Proveedor> findTop5ByRazonSocialContaining(String razonSocial);
+	
+	boolean existsByRuc(String ruc);
+
+	boolean existsByRazonSocial(String razonSocial);
 }
