@@ -4,13 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.centroinformacion.dto.MovilRegistroAccesoDTO;
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
 import com.centroinformacion.dto.RegistroRequest;
 import com.centroinformacion.entity.RegistroAcceso;
@@ -130,7 +128,9 @@ public class RegAccesosServiceImpl implements RegAccesosService{
         dto.setEstado(usuario.getEstado() == 1 ? "Ingreso" : "Salida");
      // Ajustar la URL completa para la foto
         if (usuario.getFoto() != null && !usuario.getFoto().isEmpty()) {
-            dto.setFoto("http://localhost:8090/uploads?filename=fotos/" + usuario.getFoto());
+        	
+        	//Cambio de dirección para ingresar a las fotos
+        	dto.setFoto("http://localhost:8090/uploads?filename=fotos/" + usuario.getFoto());
         } else {
             dto.setFoto(null); // Si no hay foto, dejar null
         }
