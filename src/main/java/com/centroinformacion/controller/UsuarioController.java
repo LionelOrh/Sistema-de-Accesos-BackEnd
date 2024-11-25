@@ -71,6 +71,14 @@ public class UsuarioController {
     @PostMapping("/registrarVisitante")
     public ResponseEntity<String> registrarVisitante(@RequestBody VisitanteRequest visitanteRequest) {
         try {
+            // Validar si el número de documento ya existe
+            String numDoc = visitanteRequest.getUsuario().getNumDoc();
+            boolean documentoExiste = usuarioRepository.existsByNumDoc(numDoc);
+
+            if (documentoExiste) {
+                return new ResponseEntity<>("El número de documento ya está registrado", HttpStatus.BAD_REQUEST);
+            }
+
             // Crear y guardar el Usuario
             Usuario usuario = visitanteRequest.getUsuario();
             usuarioRepository.save(usuario);
@@ -80,13 +88,11 @@ public class UsuarioController {
             motivoVisita.setMotivoVisita(visitanteRequest.getMotivoVisita());
             motivoVisita.setUsuarioVisitante(usuario);
             motivoVisita.setFechaRegistro(new Date());
-
             motivoVisitaRepository.save(motivoVisita);
 
             // Registrar el rol del usuario en usuario_tiene_rol (idRol = 8)
             UsuarioHasRolPK usuarioHasRolPK = new UsuarioHasRolPK(usuario.getIdUsuario(), 8);
             UsuarioHasRol usuarioHasRol = new UsuarioHasRol(usuarioHasRolPK, usuario, new Rol(8)); // Asumiendo que `new Rol(8)` crea una instancia con el rol 8
-
             usuarioHasRolRepository.save(usuarioHasRol);
 
             return new ResponseEntity<>("Visitante registrado exitosamente con rol asignado", HttpStatus.OK);
@@ -94,6 +100,7 @@ public class UsuarioController {
             return new ResponseEntity<>("Error al registrar visitante: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     
     @PostMapping("/registrarMotivoVisita")
     public ResponseEntity<String> registrarMotivoVisita(@RequestBody VisitanteRequest visitanteRequest) {
