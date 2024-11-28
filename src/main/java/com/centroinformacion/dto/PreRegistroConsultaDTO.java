@@ -9,7 +9,8 @@ public class PreRegistroConsultaDTO {
     private String foto;            // URL de la foto (solo para usuarios)
     private int id;                 // ID del usuario o representante
     private String tipo;            // "usuario" o "representante"
-
+    private String motivo;
+    
     // Getters y Setters
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }
@@ -28,6 +29,9 @@ public class PreRegistroConsultaDTO {
 
     public String getFoto() { return foto; }
     public void setFoto(String foto) { this.foto = foto; }
+    
+    public String getMotivo() { return motivo; }
+    public void setMotivo(String motivo) { this.motivo = motivo; }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

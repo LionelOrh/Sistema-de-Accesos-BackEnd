@@ -53,4 +53,9 @@ public class Usuario {
 		public Usuario(Integer idUsuario) {
 		    this.idUsuario = idUsuario;
 		}
+
+		
+	    
+	 
+
 }

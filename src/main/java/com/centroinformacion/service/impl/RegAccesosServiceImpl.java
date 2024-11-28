@@ -14,111 +14,113 @@ import com.centroinformacion.dto.RegistroRequest;
 import com.centroinformacion.entity.RegistroAcceso;
 import com.centroinformacion.entity.Representante;
 import com.centroinformacion.entity.Usuario;
+import com.centroinformacion.entity.Invitacion; // Asegúrate de importar la entidad Invitacion
 import com.centroinformacion.repository.RegAccesosRepository;
 import com.centroinformacion.repository.RepresentanteRepository;
 import com.centroinformacion.repository.UsuarioRepository;
+import com.centroinformacion.repository.InvitacionRepository; // Importar el repositorio de Invitacion
 import com.centroinformacion.service.RegAccesosService;
 
 @Service
-public class RegAccesosServiceImpl implements RegAccesosService{
+public class RegAccesosServiceImpl implements RegAccesosService {
 
-	 @Autowired
-	 private RegAccesosRepository repository;
-	 
-	 @Transactional
-	 @Override
-	 public void registrarAcceso(RegistroRequest request) {
-	     // Validar el usuario que realiza el registro
-	     Usuario usuarioRegistrador = usuarioRepository.findById(request.getIdUsuarioRegAcceso())
-	         .orElseThrow(() -> new RuntimeException("Usuario logueado no encontrado"));
+    @Autowired
+    private RegAccesosRepository repository;
 
-	     // Crear el registro de acceso
-	     RegistroAcceso registro = new RegistroAcceso();
-	     registro.setFechaAcceso(LocalDate.now());
-	     registro.setHoraAcceso(LocalTime.now());
-	     registro.setUsuarioRegAcceso(usuarioRegistrador);
-
-	     if (request.getIdUsuario() != null) {
-	    	// Obtener el estado actual del usuario directamente desde la base de datos
-	         String tipoAcceso = obtenerTipoAccesoUsuario(request.getIdUsuario());
-	         registro.setTipoAcceso(tipoAcceso);
-
-	         // Actualizar estado directamente
-	         usuarioRepository.actualizarEstadoUsuario(request.getIdUsuario());
-	         // Asignar referencia del usuario sin cargar toda la entidad
-	         registro.setUsuario(new Usuario(request.getIdUsuario()));
-	     } else if (request.getIdRepresentante() != null) {
-	    	 
-	    	// Obtener el estado actual del representante directamente desde la base de datos
-	         String tipoAcceso = obtenerTipoAccesoRepresentante(request.getIdRepresentante());
-	         registro.setTipoAcceso(tipoAcceso);
-	         
-	         // Actualizar estado directamente
-	         representanteRepository.actualizarEstadoRepresentante(request.getIdRepresentante());
-	         // Asignar referencia del representante sin cargar toda la entidad
-	         registro.setRepresentante(new Representante(request.getIdRepresentante()));
-	     }
-
-	     // Guardar el registro de acceso
-	     repository.save(registro);
-	 }
-
-
-	 private String obtenerTipoAccesoRepresentante(Integer idRepresentante) {
-		    Integer estado = representanteRepository.obtenerEstadoRepresentante(idRepresentante);
-		    return estado == 0 ? "Ingreso" : "Salida";
-		}
-
-	 private String obtenerTipoAccesoUsuario(Integer idUsuario) {
-		    Integer estado = usuarioRepository.obtenerEstadoUsuario(idUsuario);
-		    return estado == 0 ? "Ingreso" : "Salida";
-		}
-
-
-	@Override
-	public List<RegistroAcceso> listaPorLogin(String login) {
-		  return repository.findByUsuario_Login(login);
-	}
-
-	@Override
-	public List<RegistroAcceso> listaPorFechaAcceso(LocalDate fechaAcceso) {
-		  return repository.findByFechaAcceso(fechaAcceso);
-	}
-
-	@Override
-	public List<RegistroAcceso> listaConsultaCompleja(String loginOrNumDoc, LocalDate fechaAccesoDesde,
-			LocalDate fechaAccesoHasta) {
-		return repository.listaConsultaCompleja(loginOrNumDoc, fechaAccesoDesde, fechaAccesoHasta);
-	}
-	@Override
-	public List<RegistroAcceso> listaConsultaCompleta(String numDoc, LocalDate fechaAccesoDesde, LocalDate fechaAccesoHasta) {
-		return repository.listaConsultaCompleta(numDoc,fechaAccesoDesde, fechaAccesoHasta);
-	}
-	//Service para la consulta
-	@Autowired
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
     private RepresentanteRepository representanteRepository;
 
+    @Autowired
+    private InvitacionRepository invitacionRepository; // Inyección del repositorio de Invitacion
+  
+    @Transactional
     @Override
-    public PreRegistroConsultaDTO buscarPorCodigo(String codigo) {
-        // 1. Buscar en Usuario
-        Optional<Usuario> usuario = usuarioRepository.buscarPorCodigo(codigo).stream().findFirst();
-        if (usuario.isPresent()) {
-            return crearDTODesdeUsuario(usuario.get());
+    public void registrarAcceso(RegistroRequest request) {
+        Usuario usuarioRegistrador = usuarioRepository.findById(request.getIdUsuarioRegAcceso())
+            .orElseThrow(() -> new RuntimeException("Usuario logueado no encontrado"));
+
+        RegistroAcceso registro = new RegistroAcceso();
+        registro.setFechaAcceso(LocalDate.now());
+        registro.setHoraAcceso(LocalTime.now());
+        registro.setUsuarioRegAcceso(usuarioRegistrador);
+
+        if (request.getIdUsuario() != null) {
+            String tipoAcceso = obtenerTipoAccesoUsuario(request.getIdUsuario());
+            registro.setTipoAcceso(tipoAcceso);
+
+            usuarioRepository.actualizarEstadoUsuario(request.getIdUsuario());
+            registro.setUsuario(new Usuario(request.getIdUsuario()));
+        } else if (request.getIdRepresentante() != null) {
+            String tipoAcceso = obtenerTipoAccesoRepresentante(request.getIdRepresentante());
+            registro.setTipoAcceso(tipoAcceso);
+
+            representanteRepository.actualizarEstadoRepresentante(request.getIdRepresentante());
+            registro.setRepresentante(new Representante(request.getIdRepresentante()));
         }
 
-        // 2. Buscar en Representante
-        Optional<Representante> representante = representanteRepository.buscarPorCodigo(codigo).stream().findFirst();
-        if (representante.isPresent()) {
-            return crearDTODesdeRepresentante(representante.get());
-        }
-
-        // 3. Si no se encuentra
-        return null; // O lanzar una excepción personalizada
+        // Guardar el registro de acceso
+        repository.save(registro);
     }
 
+    private String obtenerTipoAccesoRepresentante(Integer idRepresentante) {
+        Integer estado = representanteRepository.obtenerEstadoRepresentante(idRepresentante);
+        return estado == 0 ? "Ingreso" : "Salida";
+    }
+
+    private String obtenerTipoAccesoUsuario(Integer idUsuario) {
+        Integer estado = usuarioRepository.obtenerEstadoUsuario(idUsuario);
+        return estado == 0 ? "Ingreso" : "Salida";
+    }
+
+    @Override
+    public List<RegistroAcceso> listaPorLogin(String login) {
+        return repository.findByUsuario_Login(login);
+    }
+
+    @Override
+    public List<RegistroAcceso> listaPorFechaAcceso(LocalDate fechaAcceso) {
+        return repository.findByFechaAcceso(fechaAcceso);
+    }
+
+    @Override
+    public List<RegistroAcceso> listaConsultaCompleja(String loginOrNumDoc, LocalDate fechaAccesoDesde,
+            LocalDate fechaAccesoHasta) {
+        return repository.listaConsultaCompleja(loginOrNumDoc, fechaAccesoDesde, fechaAccesoHasta);
+    }
+
+    @Override
+    public List<RegistroAcceso> listaConsultaCompleta(String numDoc, LocalDate fechaAccesoDesde, LocalDate fechaAccesoHasta) {
+        return repository.listaConsultaCompleta(numDoc, fechaAccesoDesde, fechaAccesoHasta);
+    }
+
+    @Override
+    public PreRegistroConsultaDTO buscarPorCodigo(String codigo) {
+        Optional<Usuario> usuario = usuarioRepository.buscarPorCodigo(codigo).stream().findFirst();
+        if (usuario.isPresent()) {
+            PreRegistroConsultaDTO dto = crearDTODesdeUsuario(usuario.get());
+            añadirMotivo(dto, Long.valueOf(usuario.get().getIdUsuario())); // Asegúrate de convertir a Long
+            return dto;
+        }
+        
+        Optional<Representante> representante = representanteRepository.buscarPorCodigo(codigo).stream().findFirst();
+        if (representante.isPresent()) {
+            PreRegistroConsultaDTO dto = crearDTODesdeRepresentante(representante.get());
+            añadirMotivo(dto, Long.valueOf(representante.get().getIdRepresentante())); // Conversión a Long
+            return dto;
+        }
+        return null;
+    }
+    private void añadirMotivo(PreRegistroConsultaDTO dto, Long idUsuario) {
+        Optional<Invitacion> invitacion = invitacionRepository.findByUsuarioInvitado_IdUsuario(idUsuario);
+        if (invitacion.isPresent()) {
+            dto.setMotivo(invitacion.get().getMotivo());
+        } else {
+            dto.setMotivo("No aplica");
+        }
+    }
     private PreRegistroConsultaDTO crearDTODesdeUsuario(Usuario usuario) {
         PreRegistroConsultaDTO dto = new PreRegistroConsultaDTO();
         dto.setCodigo(usuario.getLogin() != null ? usuario.getLogin() : "no aplica");
@@ -126,13 +128,10 @@ public class RegAccesosServiceImpl implements RegAccesosService{
         dto.setNombres(usuario.getNombres());
         dto.setApellidos(usuario.getApellidos());
         dto.setEstado(usuario.getEstado() == 1 ? "Ingreso" : "Salida");
-     // Ajustar la URL completa para la foto
         if (usuario.getFoto() != null && !usuario.getFoto().isEmpty()) {
-        	
-        	//Cambio de dirección para ingresar a las fotos
-        	dto.setFoto("http://localhost:8090/uploads?filename=fotos/" + usuario.getFoto());
+            dto.setFoto("http://localhost:8090/uploads?filename=fotos/" + usuario.getFoto());
         } else {
-            dto.setFoto(null); // Si no hay foto, dejar null
+            dto.setFoto(null);
         }
         dto.setId(usuario.getIdUsuario());
         dto.setTipo("usuario");
@@ -151,20 +150,12 @@ public class RegAccesosServiceImpl implements RegAccesosService{
         return dto;
     }
 
-    
-    
-    
-    
-    
-    //PARA ACCESOS APP MOVIL
+    // PARA ACCESOS APP MOVIL
     public List<RegistroAcceso> obtenerAccesosFiltrados(Integer idUsuario, Optional<LocalDate> fecha) {
         if (fecha.isPresent()) {
-            // Si la fecha está presente, realizamos el filtro por fecha y por idUsuario
             return repository.findByUsuario_IdUsuarioAndFechaAcceso(idUsuario, fecha.get());
         } else {
-            // Si no hay fecha, filtramos solo por idUsuario
             return repository.findByUsuario_IdUsuario(idUsuario);
         }
     }
-
 }

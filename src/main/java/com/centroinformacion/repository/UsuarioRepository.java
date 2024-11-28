@@ -43,4 +43,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
 	 Integer obtenerEstadoUsuario(@Param("idUsuario") Integer idUsuario);
 
 	 boolean existsByNumDoc(String numDoc);
+
+	 Optional<Usuario> findByIdUsuario(int codigo);
+
 }
