@@ -42,16 +42,14 @@ public class MobileAuthController {
         session.setAttribute("numDoc", usuario.getNumDoc());
         session.setAttribute("correo", usuario.getCorreo());
 
-        // Retorna la información del usuario en el response, asegurando UTF-8
-        return ResponseEntity.ok()
-                .header("Content-Type", "application/json; charset=UTF-8")
-                .body(Map.of(
-                    "idUsuario", usuario.getIdUsuario(),
-                    "login", usuario.getLogin(),
-                    "nombres", usuario.getNombres(),
-                    "apellidos", usuario.getApellidos(),
-                    "numDoc", usuario.getNumDoc(),
-                    "correo", usuario.getCorreo()
-                ));
+        // Retorna la información del usuario en el response
+        return ResponseEntity.ok(Map.of(
+                "idUsuario", usuario.getIdUsuario(),
+                "login", usuario.getLogin(),
+                "nombres", usuario.getNombres(),
+                "apellidos", usuario.getApellidos(),
+                "numDoc", usuario.getNumDoc(),
+                "correo", usuario.getCorreo()
+        ));
     }
 }
