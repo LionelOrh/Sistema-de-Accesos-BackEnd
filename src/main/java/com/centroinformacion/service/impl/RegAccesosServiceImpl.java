@@ -11,14 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
 import com.centroinformacion.dto.RegistroRequest;
+import com.centroinformacion.entity.Invitacion; // Asegúrate de importar la entidad Invitacion
+import com.centroinformacion.entity.MotivoVisita;
 import com.centroinformacion.entity.RegistroAcceso;
 import com.centroinformacion.entity.Representante;
 import com.centroinformacion.entity.Usuario;
-import com.centroinformacion.entity.Invitacion; // Asegúrate de importar la entidad Invitacion
+import com.centroinformacion.repository.InvitacionRepository; // Importar el repositorio de Invitacion
+import com.centroinformacion.repository.MotivoVisitaRepository;
 import com.centroinformacion.repository.RegAccesosRepository;
 import com.centroinformacion.repository.RepresentanteRepository;
 import com.centroinformacion.repository.UsuarioRepository;
-import com.centroinformacion.repository.InvitacionRepository; // Importar el repositorio de Invitacion
 import com.centroinformacion.service.RegAccesosService;
 
 @Service
@@ -35,6 +37,8 @@ public class RegAccesosServiceImpl implements RegAccesosService {
 
     @Autowired
     private InvitacionRepository invitacionRepository; // Inyección del repositorio de Invitacion
+    @Autowired
+    private MotivoVisitaRepository motivovisitaRepository; // Inyección del repositorio de Invitacion
   
     @Transactional
     @Override
@@ -118,9 +122,18 @@ public class RegAccesosServiceImpl implements RegAccesosService {
         if (invitacion.isPresent()) {
             dto.setMotivo(invitacion.get().getMotivo());
         } else {
-            dto.setMotivo("No aplica");
+            Optional<MotivoVisita> motivoVisita = motivovisitaRepository.findByUsuarioVisitante_IdUsuario(idUsuario);
+            if (motivoVisita.isPresent()) {
+                dto.setMotivoVisita(motivoVisita.get().getMotivoVisita());
+            } else {
+                dto.setMotivo("No aplica");
+                dto.setMotivoVisita("No aplica");
+            }
         }
+
+
     }
+
     private PreRegistroConsultaDTO crearDTODesdeUsuario(Usuario usuario) {
         PreRegistroConsultaDTO dto = new PreRegistroConsultaDTO();
         dto.setCodigo(usuario.getLogin() != null ? usuario.getLogin() : "no aplica");

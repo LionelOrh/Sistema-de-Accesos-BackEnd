@@ -10,7 +10,7 @@ public class PreRegistroConsultaDTO {
     private int id;                 // ID del usuario o representante
     private String tipo;            // "usuario" o "representante"
     private String motivo;
-    
+    private String motivoVisita;
     // Getters y Setters
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }
@@ -32,6 +32,9 @@ public class PreRegistroConsultaDTO {
     
     public String getMotivo() { return motivo; }
     public void setMotivo(String motivo) { this.motivo = motivo; }
+    
+    public String getMotivoVisita() { return motivoVisita; }
+    public void setMotivoVisita(String motivoVisita) { this.motivoVisita = motivoVisita; }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
