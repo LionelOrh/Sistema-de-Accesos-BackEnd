@@ -97,7 +97,7 @@ public class UsuarioController {
 
             return new ResponseEntity<>("Visitante registrado exitosamente con rol asignado", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al registrar visitante: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        	return new ResponseEntity<>("Error al registrar visitante: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
