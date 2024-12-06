@@ -51,6 +51,18 @@ public class UtilController {
         return ResponseEntity.ok(Collections.singletonMap("existe", existe));
     }
 	
+	@GetMapping("/validar-numDocUsuario")
+    public ResponseEntity<?> validarNumDocUsuario(@RequestParam String numDoc) {
+        boolean existe = utilService.validarNumDocUsuario(numDoc);
+        return ResponseEntity.ok(Collections.singletonMap("existe", existe));
+    }
+	
+	@GetMapping("/validar-numDocRepresentante")
+    public ResponseEntity<?> validarNumDocRepresentante(@RequestParam String numDoc) {
+        boolean existe = utilService.validarNumDocRepresentante(numDoc);
+        return ResponseEntity.ok(Collections.singletonMap("existe", existe));
+    }
+	
 	@GetMapping("/validar-ruc")
     public ResponseEntity<?> validarRuc(@RequestParam String ruc) {
         boolean existe = utilService.validarRuc(ruc);
