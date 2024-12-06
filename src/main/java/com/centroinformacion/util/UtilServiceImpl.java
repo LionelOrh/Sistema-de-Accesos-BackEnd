@@ -26,6 +26,20 @@ public class UtilServiceImpl implements UtilService{
 	    boolean existeEnRepresentante = representanteRepository.existsByNumDoc(numDoc);
 	    return existeEnUsuario || existeEnRepresentante;
 	}
+	
+	@Override
+	public boolean validarNumDocUsuario(String numDoc) {
+	    // Verifica si el numDoc existe en Usuario
+	    boolean existeEnUsuario = usuarioRepository.existsByNumDoc(numDoc);
+	    return existeEnUsuario;
+	}
+	
+	@Override
+	public boolean validarNumDocRepresentante(String numDoc) {
+	    // Verifica si el numDoc existe en Representante
+		 boolean existeEnRepresentante = representanteRepository.existsByNumDoc(numDoc);
+	    return existeEnRepresentante;
+	}
 
 	@Override
 	public boolean validarRuc(String ruc) {
