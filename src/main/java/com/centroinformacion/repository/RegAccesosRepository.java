@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.centroinformacion.dto.RegistroAccesoIEDTO;
+import com.centroinformacion.dto.RegistroAccesoRepresentanteDTO;
 import com.centroinformacion.entity.RegistroAcceso;
 
 public interface RegAccesosRepository extends JpaRepository<RegistroAcceso, Integer>{
@@ -13,22 +15,40 @@ public interface RegAccesosRepository extends JpaRepository<RegistroAcceso, Inte
 
     List<RegistroAcceso> findByFechaAcceso(LocalDate fechaAcceso);
 
-    @Query("select a from RegistroAcceso a where "
-            + " (a.usuario.login like ?1 or a.usuario.numDoc like ?1) and "
-            + " a.fechaAcceso >= ?2 and "
+    @Query("SELECT new com.centroinformacion.dto.RegistroAccesoIEDTO("
+            + "a.usuario.login, "
+            + "a.usuario.nombres, "
+            + "a.usuario.apellidos, "
+            + "a.usuario.numDoc, "
+            + "a.fechaAcceso, "
+            + "a.horaAcceso, "
+            + "a.tipoAcceso"
+            + ") FROM RegistroAcceso a WHERE "
+            + " (a.usuario.login like ?1 or a.usuario.numDoc like ?1) AND "
+            + " a.fechaAcceso >= ?2 AND "
             + " a.fechaAcceso <= ?3")
-    List<RegistroAcceso> listaConsultaCompleja(
-            String loginOrNumDoc, 
-            LocalDate fechaAccesoDesde, 
-            LocalDate fechaAccesoHasta);
+    List<RegistroAccesoIEDTO> listaConsultaCompleja(
+    		  String loginOrNumDoc, 
+              LocalDate fechaAccesoDesde, 
+              LocalDate fechaAccesoHasta);
+
 
     
-  //PARA TABLA REPRESENTANTE
+    @Query("SELECT new com.centroinformacion.dto.RegistroAccesoRepresentanteDTO("
+            + "r.representante.nombres,"
+            + "r.representante.apellidos,"
+            + "r.representante.cargo,"
+            + "r.representante.numDoc,"
+            + "r.tipoAcceso,"
+            + "r.fechaAcceso,"
+            + "r.horaAcceso,"
+            + "r.representante.proveedor.razonSocial"
+            + ") FROM RegistroAcceso r WHERE r.representante.numDoc LIKE :numDoc "
+                + "AND r.fechaAcceso BETWEEN :fechaInicio AND :fechaFin")
+    List<RegistroAccesoRepresentanteDTO> listaConsultaCompleta(String numDoc, 
+                                                          LocalDate fechaInicio, 
+                                                          LocalDate fechaFin);
 
-    @Query("SELECT a FROM RegistroAcceso a WHERE a.representante.numDoc LIKE ?1 AND a.fechaAcceso >= ?2 AND a.fechaAcceso <= ?3")
-    List<RegistroAcceso> listaConsultaCompleta(String numDoc, LocalDate fechaInicio, LocalDate fechaFin);
-
-    
     //PARA ACCESOS APP MOVIL
     List<RegistroAcceso> findByUsuario_IdUsuarioAndFechaAcceso(Integer idUsuario, LocalDate fechaAcceso);
     

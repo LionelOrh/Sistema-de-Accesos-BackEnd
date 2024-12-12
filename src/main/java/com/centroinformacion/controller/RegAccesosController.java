@@ -26,8 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
+import com.centroinformacion.dto.RegistroAccesoIEDTO;
+import com.centroinformacion.dto.RegistroAccesoRepresentanteDTO;
 import com.centroinformacion.dto.RegistroRequest;
-import com.centroinformacion.entity.RegistroAcceso;
 import com.centroinformacion.service.RegAccesosService;
 import com.centroinformacion.util.AppSettings;
 
@@ -52,9 +53,6 @@ public class RegAccesosController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en el registro");
 	    }
 	}
-
-
-
 	
 	
 	@GetMapping("/consultaReporteAccesos")
@@ -71,7 +69,7 @@ public class RegAccesosController {
 	    System.out.println("Fecha Desde: " + fechaAccesoDesde);
 	    System.out.println("Fecha Hasta: " + fechaAccesoHasta);
 
-	    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
+	    List<RegistroAccesoIEDTO> lstSalida = regAccesosService.listaConsultaCompleja(
 	    		 "%" + loginOrNumDoc + "%",
 	        fechaAccesoDesde,
 	        fechaAccesoHasta
@@ -87,11 +85,12 @@ public class RegAccesosController {
 	    
 	    @PostMapping("/reporteAccesos")
 	    public void reporteExcel(
-	        @RequestParam(name = "login", required = false, defaultValue = "") String loginOrNumDoc,
+	        @RequestParam(name = "loginOrNumDoc", required = false, defaultValue = "") String loginOrNumDoc,
 	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
 	        @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
 	        HttpServletRequest request, HttpServletResponse response
 	    ) {
+
 	        try (Workbook excel = new XSSFWorkbook()) {
 	            Sheet hoja = excel.createSheet(SHEET);
 	            hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, HEADER_WIDTH.length - 1));
@@ -117,27 +116,26 @@ public class RegAccesosController {
 	                celda1.setCellValue(HEADERs[i]);
 	            }
 
-	            List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleja(
+	            List<RegistroAccesoIEDTO> lstSalida = regAccesosService.listaConsultaCompleja(
 	                "%" + loginOrNumDoc + "%",
 	                fechaAccesoDesde,
 	                fechaAccesoHasta
 	            );
-
 	            int rowIdx = 3;
-	            for (RegistroAcceso obj : lstSalida) {
+	            for (RegistroAccesoIEDTO obj : lstSalida) {
 	                org.apache.poi.ss.usermodel.Row row = hoja.createRow(rowIdx++);
 
 	                // CÓDIGO
-	                row.createCell(0).setCellValue(obj.getUsuario().getLogin());
+	                row.createCell(0).setCellValue(obj.getCodigoIE());
 
 	                // NOMBRES
-	                row.createCell(1).setCellValue(obj.getUsuario().getNombres());
+	                row.createCell(1).setCellValue(obj.getNombresIE());
 
 	                // APELLIDOS
-	                row.createCell(2).setCellValue(obj.getUsuario().getApellidos());
+	                row.createCell(2).setCellValue(obj.getApellidosIE());
 
 	                // NRO DOC
-	                row.createCell(3).setCellValue(obj.getUsuario().getNumDoc());
+	                row.createCell(3).setCellValue(obj.getNumDocIE());
 
 	                // Fecha
 	                row.createCell(4).setCellValue(obj.getFechaAcceso().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -181,7 +179,7 @@ public class RegAccesosController {
 		    	numDoc = "%" + numDoc + "%";
 		    }
 
-		    List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
+		    List<RegistroAccesoRepresentanteDTO> lstSalida = regAccesosService.listaConsultaCompleta(
 		    		  "%" + numDoc + "%",
 		    	fechaAccesoDesde,
 		        fechaAccesoHasta
@@ -198,8 +196,8 @@ public class RegAccesosController {
 	    @PostMapping("/reporteRepresentante")
 	    public void reporteExcelRepresentante(
 	        @RequestParam(name = "numDoc", required = false, defaultValue = "") String numDoc,
-	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoDesde,
-		    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaAccesoHasta,
+	        @RequestParam(name = "fechaAccesoDesde", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaInicio,
+		    @RequestParam(name = "fechaAccesoHasta", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin,
 	        HttpServletRequest request, HttpServletResponse response
 	    ) {
 	        try (Workbook excel = new XSSFWorkbook()) {
@@ -227,30 +225,30 @@ public class RegAccesosController {
 	                celda1.setCellValue(HEADER[i]);
 	            }
 
-	            List<RegistroAcceso> lstSalida = regAccesosService.listaConsultaCompleta(
+	            List<RegistroAccesoRepresentanteDTO> lstSalida = regAccesosService.listaConsultaCompleta(
 	                "%" + numDoc + "%",
-	                fechaAccesoDesde,
-	    	        fechaAccesoHasta
+	                fechaInicio,
+	                fechaFin
 	            );
 
 	            int rowIdx = 3;
-	            for (RegistroAcceso obj : lstSalida) {
+	            for (RegistroAccesoRepresentanteDTO obj : lstSalida) {
 	                org.apache.poi.ss.usermodel.Row row = hoja.createRow(rowIdx++);
 
 	                // NOMBRES
-	                row.createCell(0).setCellValue(obj.getRepresentante().getNombres());
+	                row.createCell(0).setCellValue(obj.getNombresRepresentante());
 
 	                // APELLIDOS
-	                row.createCell(1).setCellValue(obj.getRepresentante().getApellidos());
+	                row.createCell(1).setCellValue(obj.getApellidosRepresentante());
 
 	                // CARGO
-	                row.createCell(2).setCellValue(obj.getRepresentante().getCargo());
+	                row.createCell(2).setCellValue(obj.getCargoRepresentante());
 
 	                // NRO DOC
-	                row.createCell(3).setCellValue(obj.getRepresentante().getNumDoc());
+	                row.createCell(3).setCellValue(obj.getNumDocRepresentante());
 
 	                // PROVEEDOR
-	                row.createCell(4).setCellValue(obj.getRepresentante().getProveedor().getRazonSocial());
+	                row.createCell(4).setCellValue(obj.getRazonSocialProveedor());
 	                // Fecha
 	                row.createCell(5).setCellValue(obj.getFechaAcceso().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
