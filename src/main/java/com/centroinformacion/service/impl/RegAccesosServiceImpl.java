@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.centroinformacion.dto.PreRegistroConsultaDTO;
+import com.centroinformacion.dto.RegistroAccesoIEDTO;
+import com.centroinformacion.dto.RegistroAccesoRepresentanteDTO;
 import com.centroinformacion.dto.RegistroRequest;
 import com.centroinformacion.entity.Invitacion; // Asegúrate de importar la entidad Invitacion
 import com.centroinformacion.entity.MotivoVisita;
@@ -90,14 +92,14 @@ public class RegAccesosServiceImpl implements RegAccesosService {
     }
 
     @Override
-    public List<RegistroAcceso> listaConsultaCompleja(String loginOrNumDoc, LocalDate fechaAccesoDesde,
+    public List<RegistroAccesoIEDTO> listaConsultaCompleja(String loginOrNumDoc, LocalDate fechaAccesoDesde,
             LocalDate fechaAccesoHasta) {
         return repository.listaConsultaCompleja(loginOrNumDoc, fechaAccesoDesde, fechaAccesoHasta);
     }
 
     @Override
-    public List<RegistroAcceso> listaConsultaCompleta(String numDoc, LocalDate fechaAccesoDesde, LocalDate fechaAccesoHasta) {
-        return repository.listaConsultaCompleta(numDoc, fechaAccesoDesde, fechaAccesoHasta);
+    public List<RegistroAccesoRepresentanteDTO>listaConsultaCompleta(String numDoc, LocalDate fechaInicio, LocalDate fechaFin) {
+        return repository.listaConsultaCompleta(numDoc, fechaInicio, fechaFin);
     }
 
     @Override
