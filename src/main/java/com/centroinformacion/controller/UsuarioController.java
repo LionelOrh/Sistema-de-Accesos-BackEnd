@@ -102,7 +102,7 @@ public class UsuarioController {
     }
 
     
-    @PostMapping("/registrarMotivoVisita")
+    @PostMapping("/registrarMotivoVisita") 
     public ResponseEntity<String> registrarMotivoVisita(@RequestBody VisitanteRequest visitanteRequest) {
         try {
             // Buscar el usuario por su número de documento
@@ -110,6 +110,11 @@ public class UsuarioController {
             
             if (usuario == null) {
                 return new ResponseEntity<>("Usuario no encontrado.", HttpStatus.NOT_FOUND);
+            }
+            
+            // Verificar si el usuario tiene correo institucional
+            if (usuario.getCorreo().endsWith("@cibertec.edu.pe")) {
+                return new ResponseEntity<>("El número de documento proporcionado pertenece a un interno de CIBERTEC.", HttpStatus.BAD_REQUEST);
             }
             
             // Registrar el motivo de visita en la tabla MotivoVisita
@@ -125,6 +130,7 @@ public class UsuarioController {
             return new ResponseEntity<>("No se encontró tu número de documento: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/{idUsuario}")
     public ResponseEntity<Resource> obtenerFoto(@PathVariable int idUsuario) {
