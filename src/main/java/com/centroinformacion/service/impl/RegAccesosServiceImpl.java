@@ -142,7 +142,7 @@ public class RegAccesosServiceImpl implements RegAccesosService {
         dto.setIdentificacion(usuario.getNumDoc());
         dto.setNombres(usuario.getNombres());
         dto.setApellidos(usuario.getApellidos());
-        dto.setEstado(usuario.getEstado() == 1 ? "Ingreso" : "Salida");
+        dto.setEstado(usuario.getEstado() == 1 ? "Dentro de la Institución" : "No se encuentra en la Institución");
         if (usuario.getFoto() != null && !usuario.getFoto().isEmpty()) {
             dto.setFoto("http://localhost:8090/uploads?filename=fotos/" + usuario.getFoto());
         } else {
