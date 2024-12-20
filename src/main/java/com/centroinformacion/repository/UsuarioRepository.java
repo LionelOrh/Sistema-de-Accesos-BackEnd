@@ -29,7 +29,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
 	 
 	 Usuario findByLoginAndPassword(String login, String password);
 	 
-	 Usuario findByNumDoc(String numDoc);
+	 Optional<Usuario> findByNumDoc(String numDoc); // Correcto
 	 
 	 
 	 @Query("SELECT u FROM Usuario u WHERE u.login = :codigo OR u.numDoc = :codigo")

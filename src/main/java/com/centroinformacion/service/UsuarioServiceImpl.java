@@ -1,6 +1,6 @@
 package com.centroinformacion.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,12 +94,14 @@ public class UsuarioServiceImpl implements UsuarioService{
 	        MotivoVisita motivo = new MotivoVisita();
 	        motivo.setUsuarioVisitante(usuario);
 	        motivo.setMotivoVisita(motivoVisita);
-	        motivo.setFechaRegistro(new Date());  // Fecha actual
+	        motivo.setFechaRegistro(LocalDateTime.now());  // Fecha actual
 	        motivoVisitaRepository.save(motivo);  // Guardar el motivo de visita en la tabla `MotivoVisita`
 	    }
   
 	 @Override
 	 public Usuario buscarPorNumeroDocumento(String numDoc) {
-	     return repository.findByNumDoc(numDoc);  // Buscar al usuario por su número de documento
+	     return repository.findByNumDoc(numDoc)
+	                      .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 	 }
+
 }
