@@ -1,9 +1,14 @@
 package com.centroinformacion.controller;
 
-import java.util.Date;
+import java.nio.file.Path;  // Para trabajar con rutas de archivos
+import java.nio.file.Paths; // Para crear rutas a archivos
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource; // Para acceder a archivos en el sistema de archivos
+import org.springframework.core.io.Resource;          // Interfaz para recursos (usado por FileSystemResource)
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;           // Para definir el tipo de contenido de la respuesta
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,16 +30,6 @@ import com.centroinformacion.service.UsuarioService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
-import org.springframework.core.io.FileSystemResource; // Para acceder a archivos en el sistema de archivos
-import org.springframework.core.io.Resource;          // Interfaz para recursos (usado por FileSystemResource)
-import org.springframework.http.HttpStatus;          // Para manejar los códigos de estado HTTP
-import org.springframework.http.MediaType;           // Para definir el tipo de contenido de la respuesta
-import org.springframework.http.ResponseEntity;      // Para construir la respuesta con el archivo de imagen
-import org.springframework.web.bind.annotation.GetMapping; // Para manejar las solicitudes GET
-import org.springframework.web.bind.annotation.PathVariable; // Para acceder a las variables en la URL
-import java.nio.file.Path;  // Para trabajar con rutas de archivos
-import java.nio.file.Paths; // Para crear rutas a archivos
 
 
 @RestController
@@ -87,7 +82,7 @@ public class UsuarioController {
             MotivoVisita motivoVisita = new MotivoVisita();
             motivoVisita.setMotivoVisita(visitanteRequest.getMotivoVisita());
             motivoVisita.setUsuarioVisitante(usuario);
-            motivoVisita.setFechaRegistro(new Date());
+            motivoVisita.setFechaRegistro(LocalDateTime.now());
             motivoVisitaRepository.save(motivoVisita);
 
             // Registrar el rol del usuario en usuario_tiene_rol (idRol = 8)
@@ -121,7 +116,7 @@ public class UsuarioController {
             MotivoVisita motivoVisita = new MotivoVisita();
             motivoVisita.setMotivoVisita(visitanteRequest.getMotivoVisita());
             motivoVisita.setUsuarioVisitante(usuario);
-            motivoVisita.setFechaRegistro(new Date());
+            motivoVisita.setFechaRegistro(LocalDateTime.now());
             
             motivoVisitaRepository.save(motivoVisita);
 
